@@ -1,15 +1,18 @@
-<Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="using:Pomidoras.ViewModels"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="120" d:DesignHeight="100"
-        x:Class="Pomidoras.Views.MainWindow"
-        x:DataType="vm:MainWindowViewModel"
-        Icon="/Assets/avalonia-logo.ico"
-        Title="Pomidoras"
-        Width="120"
-        Height="100">
+<Window
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:vm="using:Pomidoras.ViewModels"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignWidth="120"
+    d:DesignHeight="100"
+    x:Class="Pomidoras.Views.MainWindow"
+    x:DataType="vm:MainWindowViewModel"
+    Icon="/Assets/avalonia-logo.ico"
+    Title="Pomidoras"
+    Width="120"
+    Height="100">
 
     <Design.DataContext>
         <!-- This only sets the DataContext for the previewer in an IDE,
@@ -17,9 +20,24 @@
         <vm:MainWindowViewModel />
     </Design.DataContext>
 
-    <Grid ShowGridLines="True" Margin="5" RowDefinitions="0.5*, *, *" ColumnDefinitions="*, 2*, *">
-        <TextBlock Name="Timer" Grid.Row="1" Grid.Column="1" Text="{Binding Greeting}" HorizontalAlignment="Center" />
-        <Button Name="StartStop" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Center" Click="Button_OnClick">Start</Button>
+    <Grid
+        ShowGridLines="True"
+        Margin="5"
+        RowDefinitions="0.5*, *, *"
+        ColumnDefinitions="*, 2*, *">
+        <TextBlock
+            Name="Timer"
+            Grid.Row="1"
+            Grid.Column="1"
+            Text="{Binding Timer.Remaining, StringFormat='mm\\:ss'}"
+            HorizontalAlignment="Center" />
+        <Button
+            Name="StartStop"
+            Grid.Row="2"
+            Grid.Column="1"
+            HorizontalAlignment="Center"
+            Command="{Binding StartStopCommand}"
+            Content="{Binding ButtonText}" />
     </Grid>
 
 </Window>

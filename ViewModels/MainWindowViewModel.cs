@@ -1,7 +1,36 @@
-﻿namespace Pomidoras.ViewModels;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Pomidoras.Models;
 
-public partial class MainWindowViewModel : ViewModelBase {
+namespace Pomidoras.ViewModels;
 
-    public string Greeting { get; } = "25:00";
+public partial class MainWindowViewModel : ViewModelBase
+{
+
+    [ObservableProperty] private string _buttonText;
+
+    public MainWindowViewModel()
+    {
+        var timerConfigurationService = new TimerConfigurationService();
+        Timer = new TimerViewModel(timerConfigurationService);
+        ButtonText = "Start";
+    }
+
+    public ITimer Timer { get; }
+
+    [RelayCommand]
+    private void StartStop()
+    {
+        if (Timer.IsRunning)
+        {
+            Timer.Stop();
+            ButtonText = "Start";
+        }
+        else
+        {
+            Timer.Start();
+            ButtonText = "Stop";
+        }
+    }
 
 }
