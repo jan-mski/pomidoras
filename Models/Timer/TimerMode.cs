@@ -1,4 +1,4 @@
-﻿namespace Pomidoras.Models;
+﻿namespace Pomidoras.Models.Timer;
 
 public enum TimerMode
 {

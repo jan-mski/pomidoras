@@ -1,7 +1,7 @@
 ﻿using System;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Pomidoras.Models;
+using Pomidoras.Models.Timer;
 
 namespace Pomidoras.ViewModels;
 

@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Pomidoras.Models;
+using Pomidoras.Models.Timer;
 
 namespace Pomidoras.ViewModels;
 

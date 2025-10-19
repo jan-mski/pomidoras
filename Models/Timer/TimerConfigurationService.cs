@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Pomidoras.Models;
+namespace Pomidoras.Models.Timer;
 
 public class TimerConfigurationService
 {
