@@ -1,52 +1,45 @@
 ﻿using System;
-using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Pomidoras.Models.Timer;
 
 namespace Pomidoras.ViewModels;
 
-public partial class TimerViewModel : ViewModelBase, ITimer
+public partial class TimerViewModel : ViewModelBase
 {
 
-    private readonly TimerMode _currentMode;
-    private readonly DispatcherTimer _dispatcherTimer;
-    private readonly TimerConfigurationService _timerConfigurationService;
+    private readonly ITimerService _timerService;
 
-    [ObservableProperty] private TimeSpan _duration;
     [ObservableProperty] private TimeSpan _remaining;
 
-    public TimerViewModel(TimerConfigurationService timerConfigurationService)
+    public TimerViewModel(ITimerService timerService)
     {
-        _timerConfigurationService = timerConfigurationService;
-        var timerConfiguration = _timerConfigurationService.GetTimerConfiguration();
-
-        _currentMode = timerConfiguration.DefaultMode;
-        Remaining = timerConfiguration.GetDuration(_currentMode);
-        _dispatcherTimer = CreateDispatcherTimer(timerConfiguration.Interval);
+        _timerService = timerService;
+        Remaining = _timerService.Remaining;
+        _timerService.RemainingChanged += OnRemainingChanged;
+        _timerService.Completed += OnCompleted;
     }
 
-    public bool IsRunning => _dispatcherTimer.IsEnabled;
+    public bool IsRunning => _timerService.IsRunning;
 
     public void Start()
     {
-        _dispatcherTimer.Start();
+        _timerService.Start();
     }
 
     public void Stop()
     {
-        _dispatcherTimer.Stop();
-        Remaining = TimeSpan.FromMinutes(25);
+        _timerService.Stop();
     }
 
-    private DispatcherTimer CreateDispatcherTimer(TimeSpan timerInterval)
+    private void OnRemainingChanged(object? sender, TimeSpan newValue)
     {
-        var dispatcherTimer = new DispatcherTimer { Interval = timerInterval };
-        dispatcherTimer.Tick += (_, _) =>
-        {
-            Remaining -= dispatcherTimer.Interval;
-            if (Remaining.Equals(TimeSpan.Zero)) dispatcherTimer.Stop();
-        };
-        return dispatcherTimer;
+        Remaining = newValue;
+        OnPropertyChanged(nameof(Remaining));
+    }
+
+    private void OnCompleted(object? sender, EventArgs e)
+    {
+        OnPropertyChanged(nameof(IsRunning));
     }
 
 }

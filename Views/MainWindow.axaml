@@ -29,7 +29,7 @@
             Name="Timer"
             Grid.Row="1"
             Grid.Column="1"
-            Text="{Binding Timer.Remaining, StringFormat='mm\\:ss'}"
+            Text="{Binding TimerViewModel.Remaining, StringFormat='mm\\:ss'}"
             HorizontalAlignment="Center" />
         <Button
             Name="StartStop"
