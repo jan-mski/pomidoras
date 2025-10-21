@@ -2,13 +2,14 @@
 
 namespace Pomidoras.Models.Timer;
 
-public class Timer(TimeSpan duration)
+public class Timer(TimeSpan duration, TimeSpan interval)
 {
 
     private readonly TimeSpan _duration = duration;
     public TimeSpan Remaining { get; private set; } = duration;
     public bool IsRunning { get; private set; }
 
+    public TimeSpan Interval { get; } = interval;
     public event EventHandler<TimeSpan>? RemainingChanged;
     public event EventHandler? Completed;
 
@@ -16,7 +17,6 @@ public class Timer(TimeSpan duration)
     {
         if (IsRunning) return;
         IsRunning = true;
-        SignalRemainingChanged();
     }
 
     public void Stop()
@@ -27,20 +27,19 @@ public class Timer(TimeSpan duration)
         SignalRemainingChanged();
     }
 
-    public void Tick(TimeSpan interval)
+    public void Tick()
     {
-        if (!IsRunning || interval <= TimeSpan.Zero) return;
-
-        if (Remaining <= interval)
+        if (Remaining <= Interval)
         {
             Remaining = TimeSpan.Zero;
-            IsRunning = false;
             SignalRemainingChanged();
             SignalCompleted();
         }
-
-        Remaining -= interval;
-        SignalRemainingChanged();
+        else
+        {
+            Remaining -= Interval;
+            SignalRemainingChanged();
+        }
     }
 
     private void SignalRemainingChanged()

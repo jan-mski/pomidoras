@@ -8,31 +8,32 @@ public interface ITimerService
 {
 
     TimeSpan Remaining { get; }
+
     bool IsRunning { get; }
+
     void Start();
+
     void Stop();
-    event EventHandler<TimeSpan>? RemainingChanged;
-    event EventHandler? Completed;
+
+    event EventHandler<TimeSpan> RemainingChanged;
 
 }
 
 public sealed class TimerService : ITimerService, IDisposable
 {
 
-    private readonly TimerMode _currentMode;
     private readonly Timer _timer;
-    private readonly TimerConfigurationService _timerConfigurationService;
 
     private CancellationTokenSource? _cancellationTokenSource;
 
     public TimerService(TimerConfigurationService timerConfigurationService)
     {
-        _timerConfigurationService = timerConfigurationService;
-        var timerConfiguration = _timerConfigurationService.GetTimerConfiguration();
-        _currentMode = timerConfiguration.DefaultMode;
-        _timer = new Timer(timerConfiguration.GetDuration(_currentMode));
+        var timerConfiguration = timerConfigurationService.GetTimerConfiguration();
+        var duration = timerConfiguration.GetDuration(timerConfiguration.DefaultMode);
+
+        _timer = new Timer(duration, timerConfiguration.Interval);
         _timer.RemainingChanged += (_, newValue) => RemainingChanged?.Invoke(this, newValue);
-        _timer.Completed += (_, _) => Completed?.Invoke(this, EventArgs.Empty);
+        _timer.Completed += OnCompleted;
     }
 
     public void Dispose()
@@ -41,7 +42,6 @@ public sealed class TimerService : ITimerService, IDisposable
     }
 
     public event EventHandler<TimeSpan>? RemainingChanged;
-    public event EventHandler? Completed;
 
     public TimeSpan Remaining => _timer.Remaining;
     public bool IsRunning => _timer.IsRunning;
@@ -49,8 +49,8 @@ public sealed class TimerService : ITimerService, IDisposable
     public void Start()
     {
         if (IsRunning) return;
-        _timer.Start();
 
+        _timer.Start();
         _cancellationTokenSource?.Cancel();
         _cancellationTokenSource = new CancellationTokenSource();
         _ = RunAsyncTimer(_cancellationTokenSource.Token);
@@ -59,28 +59,21 @@ public sealed class TimerService : ITimerService, IDisposable
     public void Stop()
     {
         if (!IsRunning) return;
+
         _cancellationTokenSource?.Cancel();
         _timer.Stop();
     }
 
-    public void SwitchToNextMode()
+    private void OnCompleted(object? sender, EventArgs e)
     {
-        // TODO: select next mode, create new timer, etc.
+        // TODO: switch mode if "continuous" mode is enabled (it's a UI-side switch though)
+        throw new NotImplementedException();
     }
 
     private async Task RunAsyncTimer(CancellationToken cancellationToken)
     {
-        var interval = _timerConfigurationService.GetTimerConfiguration().Interval;
-        using var periodicTimer = new PeriodicTimer(interval);
-        try
-        {
-            while (await periodicTimer.WaitForNextTickAsync(cancellationToken).ConfigureAwait(false))  // TODO: what is ConfigureAwait?
-                _timer.Tick(interval);
-        }
-        catch (OperationCanceledException)
-        {
-            // TODO: need some log here
-        }
+        using var periodicTimer = new PeriodicTimer(_timer.Interval);
+        while (await periodicTimer.WaitForNextTickAsync(cancellationToken).ConfigureAwait(false)) _timer.Tick();
     }
 
 }

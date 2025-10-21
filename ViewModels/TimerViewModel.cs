@@ -16,7 +16,6 @@ public partial class TimerViewModel : ViewModelBase
         _timerService = timerService;
         Remaining = _timerService.Remaining;
         _timerService.RemainingChanged += OnRemainingChanged;
-        _timerService.Completed += OnCompleted;
     }
 
     public bool IsRunning => _timerService.IsRunning;
@@ -35,11 +34,6 @@ public partial class TimerViewModel : ViewModelBase
     {
         Remaining = newValue;
         OnPropertyChanged(nameof(Remaining));
-    }
-
-    private void OnCompleted(object? sender, EventArgs e)
-    {
-        OnPropertyChanged(nameof(IsRunning));
     }
 
 }
