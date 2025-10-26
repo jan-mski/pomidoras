@@ -20,20 +20,8 @@
         <vm:MainWindowViewModel />
     </Design.DataContext>
 
-    <Window.Styles>
-        <Style Selector="Button">
-            <Setter Property="Content" Value="Start" />
-        </Style>
-        <Style
-            Selector="Button.timerRunning">
-            <Setter
-                Property="Content"
-                Value="Stop" />
-        </Style>
-    </Window.Styles>
-
     <Grid
-        ShowGridLines="True"
+        ShowGridLines="False"
         Margin="5"
         RowDefinitions="0.5*, *, *"
         ColumnDefinitions="*, 2*, *">
@@ -41,15 +29,29 @@
             Name="Timer"
             Grid.Row="1"
             Grid.Column="1"
+            FontSize="16"
             Text="{Binding TimerViewModel.Remaining, StringFormat='mm\\:ss'}"
+            VerticalAlignment="Center"
             HorizontalAlignment="Center" />
         <Button
+            Background="Black"
             Name="StartStop"
             Grid.Row="2"
             Grid.Column="1"
+            VerticalAlignment="Top"
             HorizontalAlignment="Center"
-            Classes.timerRunning="{Binding TimerViewModel.IsRunning}"
-            Command="{Binding StartStopCommand}" />
+            Command="{Binding StartStopCommand}">
+            <Panel>
+                <PathIcon
+                    IsVisible="{Binding !TimerViewModel.IsRunning}"
+                    Data="{StaticResource PlayRegular}"
+                    Height="10" />
+                <PathIcon
+                    IsVisible="{Binding TimerViewModel.IsRunning}"
+                    Data="{StaticResource StopRegular}"
+                    Height="10" />
+            </Panel>
+        </Button>
     </Grid>
 
 </Window>
