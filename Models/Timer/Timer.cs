@@ -11,12 +11,13 @@ public class Timer(TimeSpan duration, TimeSpan interval)
 
     public TimeSpan Interval { get; } = interval;
     public event EventHandler<TimeSpan>? RemainingChanged;
-    public event EventHandler? Completed;
+    public event EventHandler<bool>? IsRunningChanged;
 
     public void Start()
     {
         if (IsRunning) return;
         IsRunning = true;
+        SignalIsRunningChanged(true);
     }
 
     public void Stop()
@@ -25,6 +26,7 @@ public class Timer(TimeSpan duration, TimeSpan interval)
         IsRunning = false;
         Remaining = _duration;
         SignalRemainingChanged();
+        SignalIsRunningChanged(false);
     }
 
     public void Tick()
@@ -33,7 +35,6 @@ public class Timer(TimeSpan duration, TimeSpan interval)
         {
             Remaining = TimeSpan.Zero;
             SignalRemainingChanged();
-            SignalCompleted();
         }
         else
         {
@@ -47,9 +48,9 @@ public class Timer(TimeSpan duration, TimeSpan interval)
         RemainingChanged?.Invoke(this, Remaining);
     }
 
-    private void SignalCompleted()
+    private void SignalIsRunningChanged(bool newValue)
     {
-        Completed?.Invoke(this, EventArgs.Empty);
+        IsRunningChanged?.Invoke(this, newValue);
     }
 
 }

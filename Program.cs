@@ -1,5 +1,6 @@
 ﻿using System;
 using Avalonia;
+using Avalonia.Logging;
 
 namespace Pomidoras;
 
@@ -22,6 +23,7 @@ internal sealed class Program
         return AppBuilder.Configure<App>()
             .UsePlatformDetect()
             .WithInterFont()
+            // .LogToTrace(LogEventLevel.Verbose); // for debug only
             .LogToTrace();
     }
 

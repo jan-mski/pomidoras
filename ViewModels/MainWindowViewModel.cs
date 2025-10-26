@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
 using Pomidoras.Models.Timer;
 
 namespace Pomidoras.ViewModels;
@@ -7,15 +6,12 @@ namespace Pomidoras.ViewModels;
 public partial class MainWindowViewModel : ViewModelBase
 {
 
-    [ObservableProperty] private string _buttonText;
-
     public MainWindowViewModel()
     {
         // TODO: replace with dependency injection
         var timerConfigurationService = new TimerConfigurationService();
         var timerService = new TimerService(timerConfigurationService);
         TimerViewModel = new TimerViewModel(timerService);
-        ButtonText = "Start";
     }
 
     public TimerViewModel TimerViewModel { get; }
@@ -28,12 +24,10 @@ public partial class MainWindowViewModel : ViewModelBase
         if (TimerViewModel.IsRunning)
         {
             TimerViewModel.Stop();
-            ButtonText = "Start";
         }
         else
         {
             TimerViewModel.Start();
-            ButtonText = "Stop";
         }
     }
 

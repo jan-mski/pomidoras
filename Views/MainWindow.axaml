@@ -20,6 +20,18 @@
         <vm:MainWindowViewModel />
     </Design.DataContext>
 
+    <Window.Styles>
+        <Style Selector="Button">
+            <Setter Property="Content" Value="Start" />
+        </Style>
+        <Style
+            Selector="Button.timerRunning">
+            <Setter
+                Property="Content"
+                Value="Stop" />
+        </Style>
+    </Window.Styles>
+
     <Grid
         ShowGridLines="True"
         Margin="5"
@@ -36,8 +48,8 @@
             Grid.Row="2"
             Grid.Column="1"
             HorizontalAlignment="Center"
-            Command="{Binding StartStopCommand}"
-            Content="{Binding ButtonText}" />
+            Classes.timerRunning="{Binding TimerViewModel.IsRunning}"
+            Command="{Binding StartStopCommand}" />
     </Grid>
 
 </Window>

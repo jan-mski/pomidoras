@@ -16,6 +16,7 @@ public interface ITimerService
     void Stop();
 
     event EventHandler<TimeSpan> RemainingChanged;
+    event EventHandler<bool> IsRunningChanged;
 
 }
 
@@ -33,7 +34,7 @@ public sealed class TimerService : ITimerService, IDisposable
 
         _timer = new Timer(duration, timerConfiguration.Interval);
         _timer.RemainingChanged += (_, newValue) => RemainingChanged?.Invoke(this, newValue);
-        _timer.Completed += OnCompleted;
+        _timer.IsRunningChanged += (_, newValue) => IsRunningChanged?.Invoke(this, newValue);
     }
 
     public void Dispose()
@@ -42,6 +43,7 @@ public sealed class TimerService : ITimerService, IDisposable
     }
 
     public event EventHandler<TimeSpan>? RemainingChanged;
+    public event EventHandler<bool>? IsRunningChanged;
 
     public TimeSpan Remaining => _timer.Remaining;
     public bool IsRunning => _timer.IsRunning;
