@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Pomidoras.Models.Timer;
 
 namespace Pomidoras.ViewModels;
@@ -9,7 +9,7 @@ public partial class TimerViewModel : ViewModelBase
 {
 
     private readonly ITimerService _timerService;
-
+    [ObservableProperty] private TimerMode _currentTimerMode;
     [ObservableProperty] private bool _isRunning;
     [ObservableProperty] private TimeSpan _remaining;
 
@@ -19,21 +19,36 @@ public partial class TimerViewModel : ViewModelBase
         Remaining = _timerService.Remaining;
         _timerService.RemainingChanged += OnRemainingChanged;
         _timerService.IsRunningChanged += OnIsRunningChanged;
+        _timerService.CurrentModeChanged += OnCurrentModeChanged;
     }
 
+    [RelayCommand]
+    private void SwitchTimerModeNext()
+    {
+        _timerService.SwitchModeNext();
+    }
 
-    public void Start()
+    [RelayCommand]
+    private void SwitchTimerModePrevious()
+    {
+        _timerService.SwitchModePrevious();
+    }
+
+    [RelayCommand]
+    private void StartTimer()
     {
         _timerService.Start();
     }
 
-    public void Stop()
+    [RelayCommand]
+    private void StopTimer()
     {
         _timerService.Stop();
     }
 
     private void OnRemainingChanged(object? sender, TimeSpan newValue)
     {
+        // TODO: would this work without OnPropertyChanged? it works in OnCurrentModeChanged...
         Remaining = newValue;
         OnPropertyChanged(nameof(Remaining));
     }
@@ -42,6 +57,13 @@ public partial class TimerViewModel : ViewModelBase
     {
         IsRunning = newValue;
         OnPropertyChanged(nameof(IsRunning));
+    }
+
+    private void OnCurrentModeChanged(object? sender, TimerMode newValue)
+    {
+        Remaining = _timerService.Remaining;
+        CurrentTimerMode = newValue;
+        OnPropertyChanged(nameof(CurrentTimerMode));
     }
 
 }

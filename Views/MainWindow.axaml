@@ -5,14 +5,15 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    d:DesignWidth="120"
-    d:DesignHeight="100"
+    d:DesignWidth="170"
+    d:DesignHeight="120"
     x:Class="Pomidoras.Views.MainWindow"
     x:DataType="vm:MainWindowViewModel"
     Icon="/Assets/avalonia-logo.ico"
-    Title="Pomidoras"
-    Width="120"
-    Height="100">
+    Title="{Binding TimerViewModel.Remaining}"
+    Width="170"
+    Height="120"
+    ExtendClientAreaToDecorationsHint="True">
 
     <Design.DataContext>
         <!-- This only sets the DataContext for the previewer in an IDE,
@@ -23,11 +24,33 @@
     <Grid
         ShowGridLines="False"
         Margin="5"
-        RowDefinitions="0.5*, *, *"
-        ColumnDefinitions="*, 2*, *">
+        RowDefinitions="*, 0.7*, *, *"
+        ColumnDefinitions="0.5*, *, 0.5*">
+        <TextBlock
+            Name="TimerMode"
+            Grid.Row="1"
+            Grid.Column="1"
+            FontSize="8"
+            Text="{Binding TimerViewModel.CurrentTimerMode}"
+            VerticalAlignment="Bottom"
+            HorizontalAlignment="Center" />
+        <Button
+            Background="Black"
+            Name="Previous"
+            Grid.Row="2"
+            Grid.Column="0"
+            VerticalAlignment="Center"
+            HorizontalAlignment="Center"
+            Command="{Binding TimerViewModel.SwitchTimerModePreviousCommand}">
+            <Panel>
+                <PathIcon
+                    Data="{StaticResource ArrowPreviousRegular}"
+                    Height="12" />
+            </Panel>
+        </Button>
         <TextBlock
             Name="Timer"
-            Grid.Row="1"
+            Grid.Row="2"
             Grid.Column="1"
             FontSize="16"
             Text="{Binding TimerViewModel.Remaining, StringFormat='mm\\:ss'}"
@@ -35,21 +58,48 @@
             HorizontalAlignment="Center" />
         <Button
             Background="Black"
-            Name="StartStop"
+            Name="Next"
             Grid.Row="2"
-            Grid.Column="1"
-            VerticalAlignment="Top"
+            Grid.Column="2"
+            VerticalAlignment="Center"
             HorizontalAlignment="Center"
-            Command="{Binding StartStopCommand}">
+            Command="{Binding TimerViewModel.SwitchTimerModeNextCommand}">
             <Panel>
                 <PathIcon
-                    IsVisible="{Binding !TimerViewModel.IsRunning}"
-                    Data="{StaticResource PlayRegular}"
-                    Height="10" />
+                    Data="{StaticResource ArrowNextRegular}"
+                    Height="12" />
+            </Panel>
+        </Button>
+        <Button
+            IsVisible="{Binding !TimerViewModel.IsRunning}"
+            Background="Black"
+            Name="Start"
+            Grid.Row="3"
+            Grid.Column="1"
+            Height="20"
+            VerticalAlignment="Top"
+            HorizontalAlignment="Center"
+            Command="{Binding TimerViewModel.StartTimerCommand}">
+            <Panel>
                 <PathIcon
-                    IsVisible="{Binding TimerViewModel.IsRunning}"
+                    Data="{StaticResource PlayRegular}"
+                    Height="8" />
+            </Panel>
+        </Button>
+        <Button
+            IsVisible="{Binding TimerViewModel.IsRunning}"
+            Background="Black"
+            Name="Stop"
+            Grid.Row="3"
+            Grid.Column="1"
+            Height="20"
+            VerticalAlignment="Top"
+            HorizontalAlignment="Center"
+            Command="{Binding TimerViewModel.StopTimerCommand}">
+            <Panel>
+                <PathIcon
                     Data="{StaticResource StopRegular}"
-                    Height="10" />
+                    Height="8" />
             </Panel>
         </Button>
     </Grid>
