@@ -13,7 +13,8 @@
     Title="{Binding TimerViewModel.Remaining}"
     Width="170"
     Height="120"
-    ExtendClientAreaToDecorationsHint="True">
+    ExtendClientAreaToDecorationsHint="True"
+    CanResize="False">
 
     <Design.DataContext>
         <!-- This only sets the DataContext for the previewer in an IDE,
