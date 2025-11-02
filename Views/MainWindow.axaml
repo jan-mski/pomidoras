@@ -5,16 +5,17 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    d:DesignWidth="170"
-    d:DesignHeight="120"
+    d:DesignWidth="150"
+    d:DesignHeight="90"
     x:Class="Pomidoras.Views.MainWindow"
     x:DataType="vm:MainWindowViewModel"
     Icon="/Assets/avalonia-logo.ico"
     Title="{Binding TimerViewModel.Remaining}"
-    Width="170"
-    Height="120"
+    Width="150"
+    Height="90"
     ExtendClientAreaToDecorationsHint="True"
-    CanResize="False">
+    CanResize="False"
+    Topmost="{Binding AlwaysOnTopEnabled}">
 
     <Design.DataContext>
         <!-- This only sets the DataContext for the previewer in an IDE,
@@ -22,87 +23,160 @@
         <vm:MainWindowViewModel />
     </Design.DataContext>
 
-    <Grid
-        ShowGridLines="False"
-        Margin="5"
-        RowDefinitions="*, 0.7*, *, *"
-        ColumnDefinitions="0.5*, *, 0.5*">
-        <TextBlock
-            Name="TimerMode"
-            Grid.Row="1"
-            Grid.Column="1"
-            FontSize="8"
-            Text="{Binding TimerViewModel.CurrentTimerMode}"
-            VerticalAlignment="Bottom"
-            HorizontalAlignment="Center" />
-        <Button
-            Background="Black"
-            Name="Previous"
-            Grid.Row="2"
-            Grid.Column="0"
-            VerticalAlignment="Center"
-            HorizontalAlignment="Center"
-            Command="{Binding TimerViewModel.SwitchTimerModePreviousCommand}">
-            <Panel>
-                <PathIcon
-                    Data="{StaticResource ArrowPreviousRegular}"
-                    Height="12" />
-            </Panel>
-        </Button>
-        <TextBlock
-            Name="Timer"
-            Grid.Row="2"
-            Grid.Column="1"
-            FontSize="16"
-            Text="{Binding TimerViewModel.Remaining, StringFormat='mm\\:ss'}"
-            VerticalAlignment="Center"
-            HorizontalAlignment="Center" />
-        <Button
-            Background="Black"
-            Name="Next"
-            Grid.Row="2"
-            Grid.Column="2"
-            VerticalAlignment="Center"
-            HorizontalAlignment="Center"
-            Command="{Binding TimerViewModel.SwitchTimerModeNextCommand}">
-            <Panel>
-                <PathIcon
-                    Data="{StaticResource ArrowNextRegular}"
-                    Height="12" />
-            </Panel>
-        </Button>
-        <Button
-            IsVisible="{Binding !TimerViewModel.IsRunning}"
-            Background="Black"
-            Name="Start"
-            Grid.Row="3"
-            Grid.Column="1"
-            Height="20"
-            VerticalAlignment="Top"
-            HorizontalAlignment="Center"
-            Command="{Binding TimerViewModel.StartTimerCommand}">
-            <Panel>
-                <PathIcon
-                    Data="{StaticResource PlayRegular}"
-                    Height="8" />
-            </Panel>
-        </Button>
-        <Button
-            IsVisible="{Binding TimerViewModel.IsRunning}"
-            Background="Black"
-            Name="Stop"
-            Grid.Row="3"
-            Grid.Column="1"
-            Height="20"
-            VerticalAlignment="Top"
-            HorizontalAlignment="Center"
-            Command="{Binding TimerViewModel.StopTimerCommand}">
-            <Panel>
-                <PathIcon
-                    Data="{StaticResource StopRegular}"
-                    Height="8" />
-            </Panel>
-        </Button>
-    </Grid>
+    <Panel
+        Name="ViewRootPanel"
+        VerticalAlignment="Bottom">
+        <SplitView
+            IsPaneOpen="{Binding SplitViewPaneOpen}"
+            DisplayMode="Overlay"
+            PanePlacement="Right"
+            CompactPaneLength="30"
+            OpenPaneLength="85">
+            <SplitView.Pane>
+                <StackPanel
+                    Spacing="5">
+                    <Button
+                        Width="14"
+                        VerticalAlignment="Top"
+                        Command="{Binding ToggleSplitViewPaneCommand}">
+                        <Panel>
+                            <PathIcon
+                                Data="{StaticResource ChevronRightRegular}"
+                                Height="10" />
+                        </Panel>
+                    </Button>
+                    <StackPanel
+                        Orientation="Horizontal">
+                        <Button
+                            Name="AlwaysOnTop"
+                            VerticalAlignment="Bottom"
+                            HorizontalAlignment="Left"
+                            Background="Transparent"
+                            Height="12"
+                            Width="18"
+                            Command="{Binding ToggleAlwaysOnTopCommand}">
+                            <Panel>
+                                <PathIcon
+                                    IsVisible="{Binding !AlwaysOnTopEnabled}"
+                                    Data="{StaticResource PinRegular}"
+                                    Height="8" />
+                                <PathIcon
+                                    IsVisible="{Binding AlwaysOnTopEnabled}"
+                                    Data="{StaticResource PinOffRegular}"
+                                    Height="8" />
+                            </Panel>
+                        </Button>
+                        <TextBlock
+                            FontSize="8">
+                            Always On Top
+                        </TextBlock>
+                    </StackPanel>
+                </StackPanel>
+            </SplitView.Pane>
+            <SplitView.Content>
+                <Grid
+                    ShowGridLines="False"
+                    Margin="5"
+                    RowDefinitions="0.7*, *, *"
+                    ColumnDefinitions="0.5*, *, 0.5*">
+                    <Button
+                        Name="Settings"
+                        Grid.Row="0"
+                        Grid.Column="2"
+                        Margin="0,2,0,0"
+                        VerticalAlignment="Top"
+                        HorizontalAlignment="Center"
+                        Background="Transparent"
+                        Height="12"
+                        Width="18"
+                        Command="{Binding ToggleSplitViewPaneCommand}">
+                        <Panel>
+                            <PathIcon
+                                Data="{StaticResource SettingsRegular}"
+                                Height="8" />
+                        </Panel>
+                    </Button>
+                    <TextBlock
+                        Name="TimerMode"
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        FontSize="8"
+                        Text="{Binding TimerViewModel.CurrentTimerMode}"
+                        VerticalAlignment="Bottom"
+                        HorizontalAlignment="Center" />
+                    <Button
+                        Background="Transparent"
+                        Name="Previous"
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        Width="16"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Command="{Binding TimerViewModel.SwitchTimerModePreviousCommand}">
+                        <Panel>
+                            <PathIcon
+                                Data="{StaticResource ArrowPreviousRegular}"
+                                Height="12" />
+                        </Panel>
+                    </Button>
+                    <TextBlock
+                        Name="Timer"
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        FontSize="16"
+                        Text="{Binding TimerViewModel.Remaining, StringFormat='mm\\:ss'}"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center" />
+                    <Button
+                        Name="Next"
+                        Background="Transparent"
+                        Grid.Row="1"
+                        Grid.Column="2"
+                        Width="16"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Command="{Binding TimerViewModel.SwitchTimerModeNextCommand}">
+                        <Panel>
+                            <PathIcon
+                                Data="{StaticResource ArrowNextRegular}"
+                                Height="12" />
+                        </Panel>
+                    </Button>
+                    <Button
+                        IsVisible="{Binding !TimerViewModel.IsRunning}"
+                        Background="Transparent"
+                        Name="Start"
+                        Grid.Row="2"
+                        Grid.Column="1"
+                        Height="20"
+                        VerticalAlignment="Top"
+                        HorizontalAlignment="Center"
+                        Command="{Binding TimerViewModel.StartTimerCommand}">
+                        <Panel>
+                            <PathIcon
+                                Data="{StaticResource PlayRegular}"
+                                Height="8" />
+                        </Panel>
+                    </Button>
+                    <Button
+                        IsVisible="{Binding TimerViewModel.IsRunning}"
+                        Background="Transparent"
+                        Name="Stop"
+                        Grid.Row="2"
+                        Grid.Column="1"
+                        Height="20"
+                        VerticalAlignment="Top"
+                        HorizontalAlignment="Center"
+                        Command="{Binding TimerViewModel.StopTimerCommand}">
+                        <Panel>
+                            <PathIcon
+                                Data="{StaticResource StopRegular}"
+                                Height="8" />
+                        </Panel>
+                    </Button>
+                </Grid>
+            </SplitView.Content>
+        </SplitView>
+    </Panel>
 
 </Window>

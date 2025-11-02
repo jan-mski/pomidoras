@@ -1,3 +1,4 @@
+using System;
 using Avalonia.Controls;
 using Avalonia.Input;
 
@@ -9,16 +10,20 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
-
-        PointerPressed += OnPointerPressed;
     }
 
-    private void OnPointerPressed(object? sender, PointerPressedEventArgs e)
+
+    protected override void OnOpened(EventArgs e)
     {
-        if (WindowState == WindowState.Normal)
-        {
-            BeginMoveDrag(e);
-        }
+        var viewRootHeight = 90;  // TODO: move magic number somewhere
+        var titleBarHeight = WindowDecorationMargin.Top;
+        ViewRootPanel.Height = viewRootHeight;
+        Height = viewRootHeight + titleBarHeight;
+    }
+
+    protected override void OnPointerPressed(PointerPressedEventArgs e)
+    {
+        if (WindowState == WindowState.Normal) BeginMoveDrag(e);
     }
 
 }
