@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -7,8 +8,6 @@ namespace Pomidoras.Models.Timer;
 
 public interface ITimerService
 {
-
-    TimerMode CurrentMode { get; }
 
     TimeSpan Remaining { get; }
 
@@ -30,8 +29,10 @@ public interface ITimerService
 public sealed class TimerService : ITimerService, IDisposable
 {
 
+    private readonly LinkedList<TimerMode> _modes;
     private readonly TimerConfigurationService _timerConfigurationService;
     private CancellationTokenSource? _cancellationTokenSource;
+    private LinkedListNode<TimerMode> _currentMode;
     private Timer _timer;
 
     public TimerService(TimerConfigurationService timerConfigurationService)
@@ -40,7 +41,8 @@ public sealed class TimerService : ITimerService, IDisposable
         var timerConfiguration = _timerConfigurationService.GetTimerConfiguration();
         var timerMode = timerConfiguration.DefaultMode;
         var duration = timerConfiguration.GetDuration(timerMode);
-
+        _modes = CreateModes(timerConfiguration);
+        _currentMode = _modes.First!;
         _timer = CreateTimer(timerMode, duration, timerConfiguration.Interval);
     }
 
@@ -54,8 +56,6 @@ public sealed class TimerService : ITimerService, IDisposable
     public event EventHandler<bool>? IsRunningChanged;
 
     public event EventHandler<TimerMode>? CurrentModeChanged;
-
-    public TimerMode CurrentMode => _timer.Mode;
 
     public TimeSpan Remaining => _timer.Remaining;
 
@@ -82,23 +82,34 @@ public sealed class TimerService : ITimerService, IDisposable
     public void SwitchModeNext()
     {
         Stop();
+        SetNextMode();
 
         var timerConfiguration = _timerConfigurationService.GetTimerConfiguration();
-        var nextMode = GetNextMode(CurrentMode, timerConfiguration.Modes);
-        var duration = timerConfiguration.GetDuration(nextMode);
-        _timer = CreateTimer(nextMode, duration, timerConfiguration.Interval);
-        SignalCurrentModeChanged(nextMode);
+        var duration = timerConfiguration.GetDuration(_currentMode.ValueRef);
+        _timer = CreateTimer(_currentMode.ValueRef, duration, timerConfiguration.Interval);
+        SignalCurrentModeChanged(_currentMode.ValueRef);
     }
 
     public void SwitchModePrevious()
     {
         Stop();
+        SetPreviousMode();
 
         var timerConfiguration = _timerConfigurationService.GetTimerConfiguration();
-        var previousMode = GetPreviousMode(CurrentMode, timerConfiguration.Modes);
-        var duration = timerConfiguration.GetDuration(previousMode);
-        _timer = CreateTimer(previousMode, duration, timerConfiguration.Interval);
-        SignalCurrentModeChanged(previousMode);
+        var duration = timerConfiguration.GetDuration(_currentMode.ValueRef);
+        _timer = CreateTimer(_currentMode.ValueRef, duration, timerConfiguration.Interval);
+        SignalCurrentModeChanged(_currentMode.ValueRef);
+    }
+
+    private LinkedList<TimerMode> CreateModes(TimerConfiguration timerConfiguration)
+    {
+        LinkedList<TimerMode> workAndBreakShort = new([TimerMode.Work, TimerMode.BreakShort]);
+        LinkedList<TimerMode> workAndBreakLong = new([TimerMode.Work, TimerMode.BreakLong]);
+
+        return new LinkedList<TimerMode>(
+            Enumerable.Repeat(workAndBreakShort, timerConfiguration.WorkSessionsUntilBreakLong - 1)
+                .SelectMany(x => x)
+                .Concat(workAndBreakLong));
     }
 
     private Timer CreateTimer(TimerMode mode, TimeSpan duration, TimeSpan interval)
@@ -127,16 +138,14 @@ public sealed class TimerService : ITimerService, IDisposable
         CurrentModeChanged?.Invoke(this, nextMode);
     }
 
-    private static TimerMode GetNextMode(TimerMode currentMode, LinkedList<TimerMode> allModes)
+    private void SetNextMode()
     {
-        var currentModeNode = allModes.Find(currentMode);
-        return currentModeNode?.Next?.ValueRef ?? allModes.First!.ValueRef;
+        _currentMode = _currentMode.Next ?? _modes.First!;
     }
 
-    private static TimerMode GetPreviousMode(TimerMode currentMode, LinkedList<TimerMode> allModes)
+    private void SetPreviousMode()
     {
-        var currentModeNode = allModes.Find(currentMode);
-        return currentModeNode?.Previous?.ValueRef ?? allModes.Last!.ValueRef;
+        _currentMode = _currentMode.Previous ?? _modes.Last!;
     }
 
 }

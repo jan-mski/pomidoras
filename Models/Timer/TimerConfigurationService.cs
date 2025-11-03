@@ -10,9 +10,10 @@ public class TimerConfigurationService
         return new TimerConfiguration(
             TimeSpan.FromMinutes(25),
             TimeSpan.FromMinutes(5),
-            TimeSpan.FromMinutes(15),
+            TimeSpan.FromMinutes(20),
             TimeSpan.FromSeconds(1),
-            TimerMode.Work);
+            TimerMode.Work,
+            4);
     }
 
 }
