@@ -15,13 +15,45 @@
     Height="90"
     ExtendClientAreaToDecorationsHint="True"
     CanResize="False"
-    Topmost="{Binding AlwaysOnTopEnabled}">
+    Topmost="{Binding AlwaysOnTopEnabled}"
+    Classes.timerEnding="{Binding TimerViewModel.Ending}">
 
     <Design.DataContext>
         <!-- This only sets the DataContext for the previewer in an IDE,
              to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
         <vm:MainWindowViewModel />
     </Design.DataContext>
+
+    <Window.Styles>
+        <Style
+            Selector="Window.timerEnding">
+            <Style.Animations>
+                <Animation
+                    Duration="0:0:5"
+                    IterationCount="3"
+                    Easing="QuadraticEaseIn">
+                    <KeyFrame
+                        Cue="0%">
+                        <Setter
+                            Property="Background"
+                            Value="Black" />
+                    </KeyFrame>
+                    <KeyFrame
+                        Cue="50%">
+                        <Setter
+                            Property="Background"
+                            Value="#6c0808" />
+                    </KeyFrame>
+                    <KeyFrame
+                        Cue="100%">
+                        <Setter
+                            Property="Background"
+                            Value="Black" />
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>
+        </Style>
+    </Window.Styles>
 
     <Panel
         Name="ViewRootPanel"

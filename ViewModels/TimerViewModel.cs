@@ -10,6 +10,7 @@ public partial class TimerViewModel : ViewModelBase
 
     private readonly ITimerService _timerService;
     [ObservableProperty] private TimerMode _currentTimerMode;
+    [ObservableProperty] private bool _ending;
     [ObservableProperty] private bool _isRunning;
     [ObservableProperty] private TimeSpan _remaining;
 
@@ -48,15 +49,14 @@ public partial class TimerViewModel : ViewModelBase
 
     private void OnRemainingChanged(object? sender, TimeSpan newValue)
     {
-        // TODO: would this work without OnPropertyChanged? it works in OnCurrentModeChanged...
         Remaining = newValue;
-        OnPropertyChanged(nameof(Remaining));
+        if (Remaining.CompareTo(TimeSpan.FromSeconds(15)) <= 0) Ending = true;
     }
 
     private void OnIsRunningChanged(object? sender, bool newValue)
     {
         IsRunning = newValue;
-        OnPropertyChanged(nameof(IsRunning));
+        Ending = false;
     }
 
     private void OnCurrentModeChanged(object? sender, TimerMode newValue)
