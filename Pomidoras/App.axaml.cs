@@ -1,11 +1,10 @@
-using System;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Data.Core;
 using Avalonia.Data.Core.Plugins;
 using System.Linq;
 using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
+using Pomidoras.Infrastructure;
 using Pomidoras.ViewModels;
 using Pomidoras.Views;
 
@@ -31,7 +30,7 @@ public partial class App : Application
             var mainWindowViewModel = serviceProvider.GetRequiredService<MainWindowViewModel>();
             desktop.MainWindow = new MainWindow
             {
-                DataContext = new MainWindowViewModel(),
+                DataContext = mainWindowViewModel
             };
         }
 
@@ -53,10 +52,10 @@ public partial class App : Application
 
     private static ServiceProvider GetDependencyInjectionServiceProvider()
     {
-        var collection = new ServiceCollection();
-        collection.AddServices();
+        var serviceCollection = new ServiceCollection();
+        serviceCollection.AddServices();
         
-        return collection.BuildServiceProvider();
+        return serviceCollection.BuildServiceProvider();
     }
 
 }

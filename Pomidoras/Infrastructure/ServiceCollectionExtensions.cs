@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Pomidoras.ViewModels;
 
-namespace Pomidoras;
+namespace Pomidoras.Infrastructure;
 
 public static class ServiceCollectionExtensions
 {
