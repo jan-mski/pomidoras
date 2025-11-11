@@ -18,7 +18,7 @@ public class ServiceCollectionTest
     public void ServiceProvider_CanBeBuilt_WithoutErrors()
     {
         var services = new ServiceCollection();
-        services.AddTransient<MainWindowViewModel>();
+        services.AddServices();
         
         var serviceProvider = services.BuildServiceProvider();
 
