@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pomidoras", "Pomidoras\Pomidoras.csproj", "{B89075DD-BBE7-41F3-815E-488E87C9C429}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pomidoras.Tests", "Pomidoras.Tests\Pomidoras.Tests.csproj", "{9335297A-AA97-4826-8807-45D79C41761A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{B89075DD-BBE7-41F3-815E-488E87C9C429}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B89075DD-BBE7-41F3-815E-488E87C9C429}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B89075DD-BBE7-41F3-815E-488E87C9C429}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9335297A-AA97-4826-8807-45D79C41761A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9335297A-AA97-4826-8807-45D79C41761A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9335297A-AA97-4826-8807-45D79C41761A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9335297A-AA97-4826-8807-45D79C41761A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
