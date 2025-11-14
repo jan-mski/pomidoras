@@ -6,11 +6,6 @@ on:
     paths-ignore:
       - '**.md'
       - '.gitignore'
-  push:
-    branches: [ main, feature/**, bugfix/** ]
-    paths-ignore:
-      - '**.md'
-      - '.gitignore'
 
 jobs:
   test:
