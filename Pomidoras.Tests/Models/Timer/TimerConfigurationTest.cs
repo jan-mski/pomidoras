@@ -1,4 +1,5 @@
-﻿using Pomidoras.Models.Timer;
+﻿using FluentAssertions;
+using Pomidoras.Models.Timer;
 
 namespace Pomidoras.Tests.Models.Timer;
 
@@ -35,9 +36,9 @@ public class TimerConfigurationTest
 
         var configuration = CreateDefaultConfiguration();
 
-        Assert.Equal(expectedInterval, configuration.Interval);
-        Assert.Equal(expectedDefaultMode, configuration.DefaultMode);
-        Assert.Equal(expectedWorkSessionsUntilBreakLong, configuration.WorkSessionsUntilBreakLong);
+        configuration.Interval.Should().Be(expectedInterval);
+        configuration.DefaultMode.Should().Be(expectedDefaultMode);
+        configuration.WorkSessionsUntilBreakLong.Should().Be(expectedWorkSessionsUntilBreakLong);
     }
 
     [Theory]
@@ -48,7 +49,7 @@ public class TimerConfigurationTest
 
         var actualDuration = configuration.GetDuration(timerMode);
 
-        Assert.Equal(expectedDuration, actualDuration);
+        actualDuration.Should().Be(expectedDuration);
     }
 
     [Fact]
@@ -57,9 +58,10 @@ public class TimerConfigurationTest
         var configuration = CreateDefaultConfiguration();
         var invalidTimerMode = (TimerMode)999;
 
-        var exception = Assert.Throws<ArgumentException>(() => configuration.GetDuration(invalidTimerMode));
+        var act = () => configuration.GetDuration(invalidTimerMode);
 
-        Assert.Equal("timerMode", exception.ParamName);
+        act.Should().Throw<ArgumentException>()
+            .WithParameterName("timerMode");
     }
 
 }

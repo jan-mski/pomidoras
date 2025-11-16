@@ -1,33 +1,56 @@
+using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Pomidoras.Infrastructure;
+using Pomidoras.Models.Timer;
 using Pomidoras.ViewModels;
+using Pomidoras.Views;
 
 namespace Pomidoras.Tests.Infrastructure;
 
 public class ServiceCollectionTest
 {
 
-    public static TheoryData<Type, ServiceLifetime> GetRegisteredServiceTypes()
+    private static readonly Dictionary<Type, ServiceLifetime> ExpectedServices = new() {
+        { typeof(MainWindowViewModel), ServiceLifetime.Transient },
+        { typeof(TimerConfigurationService), ServiceLifetime.Singleton },
+    };
+
+    public static TheoryData<Type> GetRegisteredServiceTypes()
     {
-        var theoryData = new TheoryData<Type, ServiceLifetime>();
-        theoryData.Add(typeof(MainWindowViewModel), ServiceLifetime.Transient);
-        return theoryData;
+        return new TheoryData<Type>(ExpectedServices.Keys);
     }
     
     [Fact]
     public void ServiceProvider_CanBeBuilt_WithoutErrors()
     {
-        var services = new ServiceCollection();
-        services.AddServices();
+        var serviceCollection = new ServiceCollection();
+        serviceCollection.AddServices();
         
-        var serviceProvider = services.BuildServiceProvider();
+        var serviceProvider = serviceCollection.BuildServiceProvider();
 
-        Assert.NotNull(serviceProvider);
+        serviceProvider.Should().NotBeNull();
+    }
+    
+    [Fact]
+    public void AddServices_AddsExpectedServices()
+    {
+        var serviceCollection = new ServiceCollection();
+        serviceCollection.AddServices();
+        
+        serviceCollection.Should().HaveCount(ExpectedServices.Count);
+        
+        foreach (var (serviceType, lifetime) in ExpectedServices)
+        {
+            var descriptor = serviceCollection.FirstOrDefault(sd => sd.ServiceType == serviceType);
+
+            descriptor.Should().NotBeNull(because: $"{serviceType.Name} should be registered");
+            descriptor.Lifetime.Should().Be(lifetime, because: $"{serviceType.Name} should have lifetime: {lifetime}");
+        }
     }
 
     [Theory]
     [MemberData(nameof(GetRegisteredServiceTypes))]
-    public void MainWindowViewModel_CanBeResolved(Type registeredServiceType, ServiceLifetime registeredServiceLifetime)
+    public void RegisteredServiceTypes_CanBeResolved(Type registeredServiceType)
     {
         var serviceCollection = new ServiceCollection();
         serviceCollection.AddServices();
@@ -35,9 +58,8 @@ public class ServiceCollectionTest
         
         var actualService = serviceProvider.GetService(registeredServiceType);
         
-        Assert.NotNull(actualService);
-        Assert.IsType(registeredServiceType, actualService);
-        Assert.Equal(registeredServiceLifetime, registeredServiceLifetime);
+        actualService.Should().NotBeNull();
+        actualService.Should().BeOfType(registeredServiceType);
     }
 
 }

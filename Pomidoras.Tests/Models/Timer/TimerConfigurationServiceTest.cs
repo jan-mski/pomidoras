@@ -1,4 +1,5 @@
-﻿using Pomidoras.Models.Timer;
+﻿using FluentAssertions;
+using Pomidoras.Models.Timer;
 
 namespace Pomidoras.Tests.Models.Timer;
 
@@ -20,7 +21,7 @@ public class TimerConfigurationServiceTest
 
         var actualConfiguration = timerConfigurationService.GetTimerConfiguration();
         
-        Assert.Equal(expectedConfiguration, actualConfiguration);
+        actualConfiguration.Should().BeEquivalentTo(expectedConfiguration);
     }
 
 }
