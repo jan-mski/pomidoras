@@ -10,14 +10,8 @@ public class TimerConfigurationServiceTest
     public void GetTimerConfiguration_ReturnsDefaults()
     {
         var timerConfigurationService = new TimerConfigurationService();
-        
-        var expectedConfiguration = new TimerConfiguration(
-            WorkDuration: TimeSpan.FromMinutes(25),
-            BreakShortDuration: TimeSpan.FromMinutes(5),
-            BreakLongDuration: TimeSpan.FromMinutes(20),
-            Interval: TimeSpan.FromSeconds(1),
-            DefaultMode: TimerMode.Work,
-            WorkSessionsUntilBreakLong: 4);
+
+        var expectedConfiguration = TimerConfigurationMother.Default();
 
         var actualConfiguration = timerConfigurationService.GetTimerConfiguration();
         

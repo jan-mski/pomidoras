@@ -10,14 +10,14 @@ namespace Pomidoras.Tests.Infrastructure;
 public class ServiceCollectionTest
 {
 
-    private static readonly Dictionary<Type, ServiceLifetime> ExpectedServices = new() {
+    private static readonly Dictionary<Type, ServiceLifetime> RegisteredServices = new() {
         { typeof(MainWindowViewModel), ServiceLifetime.Transient },
         { typeof(TimerConfigurationService), ServiceLifetime.Singleton },
     };
 
     public static TheoryData<Type> GetRegisteredServiceTypes()
     {
-        return new TheoryData<Type>(ExpectedServices.Keys);
+        return new TheoryData<Type>(RegisteredServices.Keys);
     }
     
     [Fact]
@@ -37,9 +37,9 @@ public class ServiceCollectionTest
         var serviceCollection = new ServiceCollection();
         serviceCollection.AddServices();
         
-        serviceCollection.Should().HaveCount(ExpectedServices.Count);
+        serviceCollection.Should().HaveCount(RegisteredServices.Count);
         
-        foreach (var (serviceType, lifetime) in ExpectedServices)
+        foreach (var (serviceType, lifetime) in RegisteredServices)
         {
             var descriptor = serviceCollection.FirstOrDefault(sd => sd.ServiceType == serviceType);
 
