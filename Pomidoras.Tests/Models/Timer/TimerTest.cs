@@ -115,10 +115,14 @@ public class TimerTest
         );
     }
 
-    [Fact]
-    public void Tick_CompletesSuccessfully()
+    [Theory]
+    [InlineData(1)]
+    [InlineData(0.5)]
+    [InlineData(0)]
+    [InlineData(-1)]
+    public void Tick_CompletesSuccessfully(double durationSeconds)
     {
-        var duration = TimeSpan.FromSeconds(1);
+        var duration = TimeSpan.FromSeconds(durationSeconds);
         var timer = TimerMother.WithDuration(duration);
         using var monitoredTimer = timer.Monitor();
 
