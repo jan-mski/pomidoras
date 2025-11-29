@@ -4,7 +4,7 @@ namespace Pomidoras.Tests.Models.Timer;
 
 public static class TimerConfigurationMother
 {
-    
+
     public static readonly TimeSpan DefaultWorkDuration = TimeSpan.FromMinutes(25);
     public static readonly TimeSpan DefaultBreakShortDuration = TimeSpan.FromMinutes(5);
     public static readonly TimeSpan DefaultBreakLongDuration = TimeSpan.FromMinutes(15);
@@ -24,11 +24,15 @@ public static class TimerConfigurationMother
         );
     }
 
-    // I could use this for public properties, but for private ones I'll need to use the constructor
-    // and store values in static constants.
-    // public static TimerConfiguration WithManyWorkSessions()
-    // {
-    //     return Default() with { WorkSessionsUntilBreakLong = 10 };
-    // }
+    public static TimerConfiguration With_WorkDuration_Interval(TimeSpan workDuration, TimeSpan interval)
+    {
+        return new TimerConfiguration(
+            workDuration,
+            DefaultBreakShortDuration,
+            DefaultBreakLongDuration,
+            interval,
+            DefaultDefaultMode,
+            DefaultWorkSessionsUntilBreakLong);
+    }
 
 }

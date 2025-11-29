@@ -2,7 +2,14 @@
 
 namespace Pomidoras.Models.Timer;
 
-public class TimerConfigurationService
+public interface ITimerConfigurationService
+{
+
+    TimerConfiguration GetTimerConfiguration();
+
+}
+
+public class TimerConfigurationService : ITimerConfigurationService
 {
 
     public TimerConfiguration GetTimerConfiguration()
