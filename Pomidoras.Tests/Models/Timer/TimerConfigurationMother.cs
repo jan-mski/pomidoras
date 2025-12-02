@@ -1,4 +1,4 @@
-﻿using Pomidoras.Models.Timer;
+﻿using Pomidoras.Models.Timer.Configuration;
 
 namespace Pomidoras.Tests.Models.Timer;
 
@@ -7,7 +7,7 @@ public static class TimerConfigurationMother
 
     public static readonly TimeSpan DefaultWorkDuration = TimeSpan.FromMinutes(25);
     public static readonly TimeSpan DefaultBreakShortDuration = TimeSpan.FromMinutes(5);
-    public static readonly TimeSpan DefaultBreakLongDuration = TimeSpan.FromMinutes(15);
+    public static readonly TimeSpan DefaultBreakLongDuration = TimeSpan.FromMinutes(20);
     public static readonly TimeSpan DefaultInterval = TimeSpan.FromSeconds(1);
     public const TimerMode DefaultDefaultMode = TimerMode.Work;
     public const int DefaultWorkSessionsUntilBreakLong = 4;

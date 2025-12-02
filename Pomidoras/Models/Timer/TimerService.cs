@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Pomidoras.Models.Timer.Configuration;
 
 namespace Pomidoras.Models.Timer;
 
@@ -14,7 +15,7 @@ namespace Pomidoras.Models.Timer;
 public sealed class TimerService : IDisposable
 {
 
-    private readonly ITimerConfigurationService _timerConfigurationService;
+    private readonly TimerConfigurationService _timerConfigurationService;
     private CancellationTokenSource? _cancellationTokenSource;
     private readonly TimerState _state;
 
@@ -25,7 +26,7 @@ public sealed class TimerService : IDisposable
 
     public bool IsRunning => _state.IsRunning;
 
-    public TimerService(ITimerConfigurationService timerConfigurationService)
+    public TimerService(TimerConfigurationService timerConfigurationService)
     {
         _timerConfigurationService = timerConfigurationService;
         var timerConfiguration = _timerConfigurationService.GetTimerConfiguration();

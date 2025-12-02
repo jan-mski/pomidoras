@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using Pomidoras.Models.Timer;
+using Pomidoras.Models.Timer.Configuration;
 
 namespace Pomidoras.Tests.Models.Timer;
 

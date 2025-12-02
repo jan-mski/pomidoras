@@ -1,18 +1,20 @@
 using FluentAssertions;
-using Moq;
 using Pomidoras.Models.Timer;
+using Pomidoras.Models.Timer.Configuration;
+using Pomidoras.Models.Timer.Configuration.Repository;
 
 namespace Pomidoras.Tests.Models.Timer;
 
 public class TimerServiceTest
 {
 
-    private readonly Mock<ITimerConfigurationService> _timerConfigurationService = new();
+    private readonly InMemoryTimerConfigurationRepository _timerConfigurationRepository = new();
+    private readonly TimerConfigurationService _timerConfigurationService;
 
     public TimerServiceTest()
     {
-        _timerConfigurationService.Setup(service => service.GetTimerConfiguration())
-            .Returns(TimerConfigurationMother.Default);
+        _timerConfigurationRepository.SaveConfiguration(TimerConfigurationMother.Default());
+        _timerConfigurationService = new TimerConfigurationService(_timerConfigurationRepository);
     }
 
     [Fact]
@@ -21,9 +23,9 @@ public class TimerServiceTest
         var duration = TimeSpan.FromMilliseconds(40);
         var interval = TimeSpan.FromMilliseconds(20);
 
-        _timerConfigurationService.Setup(service => service.GetTimerConfiguration())
-            .Returns(TimerConfigurationMother.With_WorkDuration_Interval(duration, interval));
-        var timerService = new TimerService(_timerConfigurationService.Object);
+        _timerConfigurationRepository.SaveConfiguration(
+            TimerConfigurationMother.With_WorkDuration_Interval(duration, interval));
+        var timerService = new TimerService(_timerConfigurationService);
         using var monitoredTimerService = timerService.Monitor();
 
         timerService.Start();
@@ -65,9 +67,9 @@ public class TimerServiceTest
         var duration = TimeSpan.FromMilliseconds(durationMilliseconds);
         var interval = TimeSpan.FromMilliseconds(20);
 
-        _timerConfigurationService.Setup(service => service.GetTimerConfiguration())
-            .Returns(TimerConfigurationMother.With_WorkDuration_Interval(duration, interval));
-        var timerService = new TimerService(_timerConfigurationService.Object);
+        _timerConfigurationRepository.SaveConfiguration(
+            TimerConfigurationMother.With_WorkDuration_Interval(duration, interval));
+        var timerService = new TimerService(_timerConfigurationService);
         using var monitoredTimerService = timerService.Monitor();
 
         timerService.Start();
@@ -98,7 +100,7 @@ public class TimerServiceTest
     [Fact]
     public void Start_WhenRunning_HasNoEffect()
     {
-        var timerService = new TimerService(_timerConfigurationService.Object);
+        var timerService = new TimerService(_timerConfigurationService);
         timerService.Start();
         using var monitoredTimer = timerService.Monitor();
 
@@ -111,7 +113,7 @@ public class TimerServiceTest
     [Fact]
     public void Stop_WhenRunning_StopsTimerSuccessfully()
     {
-        var timerService = new TimerService(_timerConfigurationService.Object);
+        var timerService = new TimerService(_timerConfigurationService);
         timerService.Start();
         using var monitoredTimer = timerService.Monitor();
 
@@ -127,7 +129,7 @@ public class TimerServiceTest
             e =>
             {
                 e.EventName.Should().Be(nameof(timerService.RemainingChanged));
-                e.Parameters[1].Should().Be(TimerStateMother.DefaultDuration);
+                e.Parameters[1].Should().Be(TimerConfigurationMother.DefaultWorkDuration);
             }
         );
     }
@@ -135,7 +137,7 @@ public class TimerServiceTest
     [Fact]
     public void Stop_WhenNotRunning_HasNoEffect()
     {
-        var timerService = new TimerService(_timerConfigurationService.Object);
+        var timerService = new TimerService(_timerConfigurationService);
         using var monitoredTimer = timerService.Monitor();
 
         timerService.Stop();

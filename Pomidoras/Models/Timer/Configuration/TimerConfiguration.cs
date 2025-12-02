@@ -1,6 +1,15 @@
 ﻿using System;
 
-namespace Pomidoras.Models.Timer;
+namespace Pomidoras.Models.Timer.Configuration;
+
+public enum TimerMode
+{
+
+    Work,
+    BreakShort,
+    BreakLong
+
+}
 
 public record TimerConfiguration(
     TimeSpan WorkDuration,
