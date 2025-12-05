@@ -1,26 +1,52 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Pomidoras.Models.Timer.Configuration;
 
 namespace Pomidoras.Models.Timer;
 
+public record TimerState(
+    List<TimerMode> Modes,
+    int CurrentModeIndex,
+    TimeSpan Duration,
+    TimeSpan Interval)
+{
+
+    public int CurrentModeIndex { get; set; } = CurrentModeIndex;
+    public TimeSpan Duration { get; set; } = Duration;
+    public TimeSpan Interval { get; } = Interval;
+    public TimeSpan Remaining { get; set; } = Duration;
+    public bool IsRunning { get; set; }
+
+    public TimerMode GetCurrentMode()
+    {
+        return Modes[CurrentModeIndex];
+    }
+
+}
+
 // TODO:
 //  - [x] Fix TimerServiceTest by using a timer factory
 //  - [x] Reconsider testing approach for periodic timer so that I can avoid writing shitty interfaces for no reason
 //  - [x] Instead of the dumb timer factory, just configure an interval of 50ms or less and only assert events
-//  - [ ] Add remaining methods from TimerService_Old
+//  - [X] Add remaining methods from TimerService_Old
 //  - [ ] Add tests for the remaining methods
+//  - [ ] Add tests for Dispose and DisposeAsync?
 //  - [ ] Add this service to dependency injection and update those tests
-public sealed class TimerService : IDisposable
+//  - [ ] Consider validation for TimerConfiguration
+public sealed class TimerService : IDisposable, IAsyncDisposable
 {
 
     private readonly TimerConfigurationService _timerConfigurationService;
     private CancellationTokenSource? _cancellationTokenSource;
     private readonly TimerState _state;
+    private Task? _runningTimerTask;
 
     public event EventHandler<TimeSpan>? RemainingChanged;
     public event EventHandler<bool>? IsRunningChanged;
+    public event EventHandler<TimerMode>? ModeChanged;
 
     public TimeSpan Remaining => _state.Remaining;
 
@@ -30,14 +56,38 @@ public sealed class TimerService : IDisposable
     {
         _timerConfigurationService = timerConfigurationService;
         var timerConfiguration = _timerConfigurationService.GetTimerConfiguration();
-        var timerMode = timerConfiguration.DefaultMode;
-        var duration = timerConfiguration.GetDuration(timerMode);
-        _state = new TimerState(timerMode, duration, timerConfiguration.Interval);
+        var timerModes = CreateModes(timerConfiguration);
+        var timerModeIndex = timerConfiguration.InitialModeIndex;
+        var duration = timerConfiguration.GetDuration(timerModes[timerModeIndex]);
+        _state = new TimerState(timerModes, timerModeIndex, duration, timerConfiguration.Interval);
     }
 
     public void Dispose()
     {
         _cancellationTokenSource?.Cancel();
+        _cancellationTokenSource?.Dispose();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_cancellationTokenSource is not null)
+        {
+            await _cancellationTokenSource.CancelAsync();
+        }
+
+        if (_runningTimerTask is not null)
+        {
+            try
+            {
+                await _runningTimerTask.ConfigureAwait(false);
+            }
+            catch (OperationCanceledException)
+            {
+                // Expected
+            }
+        }
+
+        _cancellationTokenSource?.Dispose();
     }
 
     public void Start()
@@ -52,7 +102,7 @@ public sealed class TimerService : IDisposable
 
         _cancellationTokenSource?.Cancel();
         _cancellationTokenSource = new CancellationTokenSource();
-        _ = RunAsyncTimer(_cancellationTokenSource.Token);
+        _runningTimerTask = RunAsyncTimer(_cancellationTokenSource.Token);
     }
 
     public void Stop()
@@ -62,42 +112,40 @@ public sealed class TimerService : IDisposable
             return;
         }
 
-        Finish();
+        SetCompleted();
 
         _state.Remaining = _state.Duration;
         SignalRemainingChanged();
     }
 
-    private void Finish()
+    public void SwitchModeNext()
     {
-        _cancellationTokenSource?.Cancel();
-        _state.IsRunning = false;
-        SignalIsRunningChanged(false);
-    }
+        Stop();
 
-    private void Tick()
-    {
-        if (_state.Remaining <= _state.Interval)
+        if (++_state.CurrentModeIndex == _state.Modes.Count)
         {
-            _state.Remaining = TimeSpan.Zero;
-            SignalRemainingChanged();
-            Finish();
+            _state.CurrentModeIndex = 0;
         }
-        else
+
+        var timerConfiguration = _timerConfigurationService.GetTimerConfiguration();
+        var currentMode = _state.GetCurrentMode();
+        _state.Duration = timerConfiguration.GetDuration(currentMode);
+        SignalModeChanged(currentMode);
+    }
+
+    public void SwitchModePrevious()
+    {
+        Stop();
+
+        if (--_state.CurrentModeIndex == -1)
         {
-            _state.Remaining -= _state.Interval;
-            SignalRemainingChanged();
+            _state.CurrentModeIndex = _state.Modes.Count;
         }
-    }
 
-    private void SignalRemainingChanged()
-    {
-        RemainingChanged?.Invoke(this, _state.Remaining);
-    }
-
-    private void SignalIsRunningChanged(bool newValue)
-    {
-        IsRunningChanged?.Invoke(this, newValue);
+        var timerConfiguration = _timerConfigurationService.GetTimerConfiguration();
+        var currentMode = _state.GetCurrentMode();
+        _state.Duration = timerConfiguration.GetDuration(currentMode);
+        SignalModeChanged(currentMode);
     }
 
     private async Task RunAsyncTimer(CancellationToken cancellationToken)
@@ -107,6 +155,54 @@ public sealed class TimerService : IDisposable
         {
             Tick();
         }
+    }
+
+    private void Tick()
+    {
+        if (_state.Remaining <= _state.Interval)
+        {
+            _state.Remaining = TimeSpan.Zero;
+            SignalRemainingChanged();
+            SetCompleted();
+        }
+        else
+        {
+            _state.Remaining -= _state.Interval;
+            SignalRemainingChanged();
+        }
+    }
+
+    private void SetCompleted()
+    {
+        _cancellationTokenSource?.Cancel();
+        _state.IsRunning = false;
+        SignalIsRunningChanged(false);
+    }
+
+    private void SignalIsRunningChanged(bool newValue)
+    {
+        IsRunningChanged?.Invoke(this, newValue);
+    }
+
+    private void SignalRemainingChanged()
+    {
+        RemainingChanged?.Invoke(this, _state.Remaining);
+    }
+
+    private void SignalModeChanged(TimerMode nextMode)
+    {
+        ModeChanged?.Invoke(this, nextMode);
+    }
+
+    private List<TimerMode> CreateModes(TimerConfiguration timerConfiguration)
+    {
+        List<TimerMode> workAndBreakShort = new([TimerMode.Work, TimerMode.BreakShort]);
+        List<TimerMode> workAndBreakLong = new([TimerMode.Work, TimerMode.BreakLong]);
+
+        return Enumerable.Repeat(workAndBreakShort, timerConfiguration.WorkSessionsUntilBreakLong - 1)
+            .SelectMany(x => x)
+            .Concat(workAndBreakLong)
+            .ToList();
     }
 
 }

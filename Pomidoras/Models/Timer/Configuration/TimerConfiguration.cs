@@ -16,7 +16,7 @@ public record TimerConfiguration(
     TimeSpan BreakShortDuration,
     TimeSpan BreakLongDuration,
     TimeSpan Interval,
-    TimerMode DefaultMode,
+    int InitialModeIndex,
     int WorkSessionsUntilBreakLong)
 {
 

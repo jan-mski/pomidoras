@@ -1,21 +1,21 @@
 ﻿using FluentAssertions;
 using Pomidoras.Models.Timer.Configuration;
-using Pomidoras.Models.Timer.Configuration.Repository;
+using Pomidoras.Tests.Models.Timer.Configuration.Repository;
 
-namespace Pomidoras.Tests.Models.Timer;
+namespace Pomidoras.Tests.Models.Timer.Configuration;
 
 public class TimerConfigurationServiceTest
 {
 
-    private readonly InMemoryTimerConfigurationRepository _timerConfigurationRepository = new();
+    private readonly TimerConfigurationRepositoryStub _timerConfigurationRepositoryStub = new();
 
     [Fact]
     public void GetTimerConfiguration_WhenNoConfigurationExists_ReturnsAndSavesDefault()
     {
         var expectedConfiguration = TimerConfigurationMother.Default();
-        _timerConfigurationRepository.SaveConfiguration(expectedConfiguration);
+        _timerConfigurationRepositoryStub.SaveConfiguration(expectedConfiguration);
 
-        var timerConfigurationService = new TimerConfigurationService(_timerConfigurationRepository);
+        var timerConfigurationService = new TimerConfigurationService(_timerConfigurationRepositoryStub);
 
         var actualConfiguration = timerConfigurationService.GetTimerConfiguration();
 
@@ -27,9 +27,9 @@ public class TimerConfigurationServiceTest
     {
         var expectedConfiguration =
             TimerConfigurationMother.With_WorkDuration_Interval(TimeSpan.MaxValue, TimeSpan.MinValue);
-        _timerConfigurationRepository.SaveConfiguration(expectedConfiguration);
+        _timerConfigurationRepositoryStub.SaveConfiguration(expectedConfiguration);
 
-        var timerConfigurationService = new TimerConfigurationService(_timerConfigurationRepository);
+        var timerConfigurationService = new TimerConfigurationService(_timerConfigurationRepositoryStub);
 
         var actualConfiguration = timerConfigurationService.GetTimerConfiguration();
 
