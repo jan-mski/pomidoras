@@ -121,7 +121,9 @@ public class TimerServiceTest
         timerService.Stop();
 
         timerService.IsRunning.Should().BeFalse();
-        timerService.Remaining.Should().Be(TimerConfigurationMother.DefaultWorkDuration);
+
+        var expectedDuration = TimerConfigurationMother.DefaultWorkDuration;
+        timerService.Remaining.Should().Be(expectedDuration);
         monitoredTimer.OccurredEvents.Should().SatisfyRespectively(
             e =>
             {
@@ -131,13 +133,13 @@ public class TimerServiceTest
             e =>
             {
                 e.EventName.Should().Be(nameof(timerService.RemainingChanged));
-                e.Parameters[1].Should().Be(TimerConfigurationMother.DefaultWorkDuration);
+                e.Parameters[1].Should().Be(expectedDuration);
             }
         );
     }
 
     [Fact]
-    public async Task Stop_WhenRunning_NoMoreEventsAfterStop()
+    public async Task Stop_WhenRunning_NoMoreEventsAfter()
     {
         var duration = TimeSpan.FromMilliseconds(80);
         var interval = TimeSpan.FromMilliseconds(20);
@@ -151,7 +153,7 @@ public class TimerServiceTest
         using var monitoredTimer = timerService.Monitor();
         await Task.Delay(interval * 2, TestContext.Current.CancellationToken);
 
-        monitoredTimer.OccurredEvents.Should().BeEmpty("async timer loop should have stopped");
+        monitoredTimer.OccurredEvents.Should().BeEmpty();
     }
 
     [Fact]
@@ -163,6 +165,196 @@ public class TimerServiceTest
         timerService.Stop();
 
         timerService.IsRunning.Should().BeFalse();
+        monitoredTimer.OccurredEvents.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task SwitchModeNext_WhenRunning_SwitchesModeSuccessfully()
+    {
+        await using var timerService = new TimerService(_timerConfigurationService);
+
+        timerService.Start();
+        using var monitoredTimer = timerService.Monitor();
+        timerService.SwitchModeNext();
+
+        timerService.IsRunning.Should().BeFalse();
+
+        var expectedDuration = TimerConfigurationMother.DefaultBreakShortDuration;
+        timerService.Remaining.Should().Be(expectedDuration);
+        monitoredTimer.OccurredEvents.Should().SatisfyRespectively(
+            e =>
+            {
+                e.EventName.Should().Be(nameof(timerService.IsRunningChanged));
+                e.Parameters[1].Should().Be(false);
+            },
+            e =>
+            {
+                e.EventName.Should().Be(nameof(timerService.RemainingChanged));
+                e.Parameters[1].Should().Be(expectedDuration);
+            },
+            e =>
+            {
+                e.EventName.Should().Be(nameof(timerService.ModeChanged));
+                e.Parameters[1].Should().Be(TimerMode.BreakShort);
+            }
+        );
+    }
+
+    [Fact]
+    public async Task SwitchModeNext_WhenRunning_NoMoreEventsAfter()
+    {
+        var duration = TimeSpan.FromMilliseconds(80);
+        var interval = TimeSpan.FromMilliseconds(20);
+
+        _timerConfigurationRepositoryStub.SaveConfiguration(
+            TimerConfigurationMother.With_WorkDuration_Interval(duration, interval));
+        await using var timerService = new TimerService(_timerConfigurationService);
+
+        timerService.Start();
+        timerService.SwitchModeNext();
+        using var monitoredTimer = timerService.Monitor();
+
+        await Task.Delay(interval * 2, TestContext.Current.CancellationToken);
+
+        monitoredTimer.OccurredEvents.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task SwitchModeNext_WhenNotRunning_SwitchesModeSuccessfully()
+    {
+        await using var timerService = new TimerService(_timerConfigurationService);
+
+        using var monitoredTimer = timerService.Monitor();
+        timerService.SwitchModeNext();
+
+        timerService.IsRunning.Should().BeFalse();
+
+        var expectedDuration = TimerConfigurationMother.DefaultBreakShortDuration;
+        timerService.Remaining.Should().Be(expectedDuration);
+        monitoredTimer.OccurredEvents.Should().SatisfyRespectively(
+            e =>
+            {
+                e.EventName.Should().Be(nameof(timerService.RemainingChanged));
+                e.Parameters[1].Should().Be(expectedDuration);
+            },
+            e =>
+            {
+                e.EventName.Should().Be(nameof(timerService.ModeChanged));
+                e.Parameters[1].Should().Be(TimerMode.BreakShort);
+            }
+        );
+    }
+
+    [Fact]
+    public async Task SwitchModePrevious_WhenRunning_SwitchesModeSuccessfully()
+    {
+        await using var timerService = new TimerService(_timerConfigurationService);
+
+        timerService.Start();
+        using var monitoredTimer = timerService.Monitor();
+        timerService.SwitchModePrevious();
+
+        timerService.IsRunning.Should().BeFalse();
+
+        var expectedDuration = TimerConfigurationMother.DefaultBreakLongDuration;
+        timerService.Remaining.Should().Be(expectedDuration);
+        monitoredTimer.OccurredEvents.Should().SatisfyRespectively(
+            e =>
+            {
+                e.EventName.Should().Be(nameof(timerService.IsRunningChanged));
+                e.Parameters[1].Should().Be(false);
+            },
+            e =>
+            {
+                e.EventName.Should().Be(nameof(timerService.RemainingChanged));
+                e.Parameters[1].Should().Be(expectedDuration);
+            },
+            e =>
+            {
+                e.EventName.Should().Be(nameof(timerService.ModeChanged));
+                e.Parameters[1].Should().Be(TimerMode.BreakLong);
+            }
+        );
+    }
+
+    [Fact]
+    public async Task SwitchModePrevious_WhenRunning_NoMoreEventsAfter()
+    {
+        var duration = TimeSpan.FromMilliseconds(80);
+        var interval = TimeSpan.FromMilliseconds(20);
+
+        _timerConfigurationRepositoryStub.SaveConfiguration(
+            TimerConfigurationMother.With_WorkDuration_Interval(duration, interval));
+        await using var timerService = new TimerService(_timerConfigurationService);
+
+        timerService.Start();
+        timerService.SwitchModePrevious();
+        using var monitoredTimer = timerService.Monitor();
+
+        await Task.Delay(interval * 2, TestContext.Current.CancellationToken);
+
+        monitoredTimer.OccurredEvents.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task SwitchModePrevious_WhenNotRunning_SwitchesModeSuccessfully()
+    {
+        await using var timerService = new TimerService(_timerConfigurationService);
+
+        using var monitoredTimer = timerService.Monitor();
+        timerService.SwitchModePrevious();
+
+        timerService.IsRunning.Should().BeFalse();
+
+        var expectedDuration = TimerConfigurationMother.DefaultBreakLongDuration;
+        timerService.Remaining.Should().Be(expectedDuration);
+        monitoredTimer.OccurredEvents.Should().SatisfyRespectively(
+            e =>
+            {
+                e.EventName.Should().Be(nameof(timerService.RemainingChanged));
+                e.Parameters[1].Should().Be(expectedDuration);
+            },
+            e =>
+            {
+                e.EventName.Should().Be(nameof(timerService.ModeChanged));
+                e.Parameters[1].Should().Be(TimerMode.BreakLong);
+            }
+        );
+    }
+
+    [Fact]
+    public async Task Dispose_StopsTimer()
+    {
+        var duration = TimeSpan.FromMilliseconds(80);
+        var interval = TimeSpan.FromMilliseconds(20);
+
+        _timerConfigurationRepositoryStub.SaveConfiguration(
+            TimerConfigurationMother.With_WorkDuration_Interval(duration, interval));
+        var timerService = new TimerService(_timerConfigurationService);
+
+        timerService.Start();
+        timerService.Dispose();
+        using var monitoredTimer = timerService.Monitor();
+        await Task.Delay(interval * 2, TestContext.Current.CancellationToken);
+
+        monitoredTimer.OccurredEvents.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task DisposeAsync_StopsTimer()
+    {
+        var duration = TimeSpan.FromMilliseconds(80);
+        var interval = TimeSpan.FromMilliseconds(20);
+
+        _timerConfigurationRepositoryStub.SaveConfiguration(
+            TimerConfigurationMother.With_WorkDuration_Interval(duration, interval));
+        var timerService = new TimerService(_timerConfigurationService);
+
+        timerService.Start();
+        await timerService.DisposeAsync();
+        using var monitoredTimer = timerService.Monitor();
+        await Task.Delay(interval * 2, TestContext.Current.CancellationToken);
+
         monitoredTimer.OccurredEvents.Should().BeEmpty();
     }
 

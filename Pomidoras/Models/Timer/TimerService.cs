@@ -32,10 +32,10 @@ public record TimerState(
 //  - [x] Reconsider testing approach for periodic timer so that I can avoid writing shitty interfaces for no reason
 //  - [x] Instead of the dumb timer factory, just configure an interval of 50ms or less and only assert events
 //  - [X] Add remaining methods from TimerService_Old
-//  - [ ] Add tests for the remaining methods
-//  - [ ] Add tests for Dispose and DisposeAsync?
+//  - [x] Add tests for the remaining methods
+//  - [x] Add tests for Dispose and DisposeAsync
+//  - [ ] Try to add some test for mode index corner cases
 //  - [ ] Add this service to dependency injection and update those tests
-//  - [ ] Consider validation for TimerConfiguration
 public sealed class TimerService : IDisposable, IAsyncDisposable
 {
 
@@ -79,7 +79,7 @@ public sealed class TimerService : IDisposable, IAsyncDisposable
         {
             try
             {
-                await _runningTimerTask.ConfigureAwait(false);
+                await _runningTimerTask.WaitAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
             }
             catch (OperationCanceledException)
             {
@@ -120,31 +120,36 @@ public sealed class TimerService : IDisposable, IAsyncDisposable
 
     public void SwitchModeNext()
     {
-        Stop();
-
-        if (++_state.CurrentModeIndex == _state.Modes.Count)
+        if (_state.IsRunning)
         {
-            _state.CurrentModeIndex = 0;
+            SetCompleted();
         }
 
-        var timerConfiguration = _timerConfigurationService.GetTimerConfiguration();
-        var currentMode = _state.GetCurrentMode();
-        _state.Duration = timerConfiguration.GetDuration(currentMode);
-        SignalModeChanged(currentMode);
+        var nextModeIndex = _state.CurrentModeIndex + 1 == _state.Modes.Count ? 0 : _state.CurrentModeIndex + 1;
+        SwitchMode(nextModeIndex);
     }
 
     public void SwitchModePrevious()
     {
-        Stop();
-
-        if (--_state.CurrentModeIndex == -1)
+        if (_state.IsRunning)
         {
-            _state.CurrentModeIndex = _state.Modes.Count;
+            SetCompleted();
         }
 
-        var timerConfiguration = _timerConfigurationService.GetTimerConfiguration();
+        var previousModeIndex = _state.CurrentModeIndex - 1 < 0 ? _state.Modes.Count - 1 : _state.CurrentModeIndex - 1;
+        SwitchMode(previousModeIndex);
+    }
+
+    private void SwitchMode(int newModeIndex)
+    {
+        _state.CurrentModeIndex = newModeIndex;
         var currentMode = _state.GetCurrentMode();
+        
+        var timerConfiguration = _timerConfigurationService.GetTimerConfiguration();
         _state.Duration = timerConfiguration.GetDuration(currentMode);
+        _state.Remaining = _state.Duration;
+        
+        SignalRemainingChanged();
         SignalModeChanged(currentMode);
     }
 
@@ -153,6 +158,11 @@ public sealed class TimerService : IDisposable, IAsyncDisposable
         using var periodicTimer = new PeriodicTimer(_state.Interval);
         while (await periodicTimer.WaitForNextTickAsync(cancellationToken).ConfigureAwait(false))
         {
+            if (cancellationToken.IsCancellationRequested)
+            {
+                break;
+            }
+
             Tick();
         }
     }
