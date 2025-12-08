@@ -168,9 +168,30 @@ public class TimerServiceTest
         monitoredTimer.OccurredEvents.Should().BeEmpty();
     }
 
-    [Fact]
-    public async Task SwitchModeNext_WhenRunning_SwitchesModeSuccessfully()
+    public static TheoryData<int, TimeSpan, TimerMode> NextModeData()
     {
+        return new TheoryData<int, TimeSpan, TimerMode>
+        {
+            { 0, TimerConfigurationMother.DefaultBreakShortDuration, TimerMode.BreakShort },
+            { 1, TimerConfigurationMother.DefaultWorkDuration, TimerMode.Work },
+            { 2, TimerConfigurationMother.DefaultBreakShortDuration, TimerMode.BreakShort },
+            { 3, TimerConfigurationMother.DefaultWorkDuration, TimerMode.Work },
+            { 4, TimerConfigurationMother.DefaultBreakShortDuration, TimerMode.BreakShort },
+            { 5, TimerConfigurationMother.DefaultWorkDuration, TimerMode.Work },
+            { 6, TimerConfigurationMother.DefaultBreakLongDuration, TimerMode.BreakLong },
+            { 7, TimerConfigurationMother.DefaultWorkDuration, TimerMode.Work }
+        };
+    }
+
+    [Theory]
+    [MemberData(nameof(NextModeData))]
+    public async Task SwitchModeNext_WhenRunning_SwitchesModeSuccessfully(
+        int initialModeIndex,
+        TimeSpan expectedDuration,
+        TimerMode expectedMode)
+    {
+        _timerConfigurationRepositoryStub.SaveConfiguration(
+            TimerConfigurationMother.With_InitialModeIndex(initialModeIndex));
         await using var timerService = new TimerService(_timerConfigurationService);
 
         timerService.Start();
@@ -179,7 +200,6 @@ public class TimerServiceTest
 
         timerService.IsRunning.Should().BeFalse();
 
-        var expectedDuration = TimerConfigurationMother.DefaultBreakShortDuration;
         timerService.Remaining.Should().Be(expectedDuration);
         monitoredTimer.OccurredEvents.Should().SatisfyRespectively(
             e =>
@@ -195,7 +215,7 @@ public class TimerServiceTest
             e =>
             {
                 e.EventName.Should().Be(nameof(timerService.ModeChanged));
-                e.Parameters[1].Should().Be(TimerMode.BreakShort);
+                e.Parameters[1].Should().Be(expectedMode);
             }
         );
     }
@@ -245,9 +265,30 @@ public class TimerServiceTest
         );
     }
 
-    [Fact]
-    public async Task SwitchModePrevious_WhenRunning_SwitchesModeSuccessfully()
+    public static TheoryData<int, TimeSpan, TimerMode> PreviousModeData()
     {
+        return new TheoryData<int, TimeSpan, TimerMode>
+        {
+            { 0, TimerConfigurationMother.DefaultBreakLongDuration, TimerMode.BreakLong },
+            { 1, TimerConfigurationMother.DefaultWorkDuration, TimerMode.Work },
+            { 2, TimerConfigurationMother.DefaultBreakShortDuration, TimerMode.BreakShort },
+            { 3, TimerConfigurationMother.DefaultWorkDuration, TimerMode.Work },
+            { 4, TimerConfigurationMother.DefaultBreakShortDuration, TimerMode.BreakShort },
+            { 5, TimerConfigurationMother.DefaultWorkDuration, TimerMode.Work },
+            { 6, TimerConfigurationMother.DefaultBreakShortDuration, TimerMode.BreakShort },
+            { 7, TimerConfigurationMother.DefaultWorkDuration, TimerMode.Work }
+        };
+    }
+
+    [Theory]
+    [MemberData(nameof(PreviousModeData))]
+    public async Task SwitchModePrevious_WhenRunning_SwitchesModeSuccessfully(
+        int initialModeIndex,
+        TimeSpan expectedDuration,
+        TimerMode expectedMode)
+    {
+        _timerConfigurationRepositoryStub.SaveConfiguration(
+            TimerConfigurationMother.With_InitialModeIndex(initialModeIndex));
         await using var timerService = new TimerService(_timerConfigurationService);
 
         timerService.Start();
@@ -256,7 +297,6 @@ public class TimerServiceTest
 
         timerService.IsRunning.Should().BeFalse();
 
-        var expectedDuration = TimerConfigurationMother.DefaultBreakLongDuration;
         timerService.Remaining.Should().Be(expectedDuration);
         monitoredTimer.OccurredEvents.Should().SatisfyRespectively(
             e =>
@@ -272,7 +312,7 @@ public class TimerServiceTest
             e =>
             {
                 e.EventName.Should().Be(nameof(timerService.ModeChanged));
-                e.Parameters[1].Should().Be(TimerMode.BreakLong);
+                e.Parameters[1].Should().Be(expectedMode);
             }
         );
     }

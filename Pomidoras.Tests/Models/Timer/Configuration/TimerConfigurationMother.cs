@@ -26,13 +26,12 @@ public static class TimerConfigurationMother
 
     public static TimerConfiguration With_WorkDuration_Interval(TimeSpan workDuration, TimeSpan interval)
     {
-        return new TimerConfiguration(
-            workDuration,
-            DefaultBreakShortDuration,
-            DefaultBreakLongDuration,
-            interval,
-            DefaultInitialModeIndex,
-            DefaultWorkSessionsUntilBreakLong);
+        return Default() with { WorkDuration = workDuration, Interval = interval };
+    }
+
+    public static TimerConfiguration With_InitialModeIndex(int initialModeIndex)
+    {
+        return Default() with { InitialModeIndex = initialModeIndex };
     }
 
 }

@@ -34,7 +34,7 @@ public record TimerState(
 //  - [X] Add remaining methods from TimerService_Old
 //  - [x] Add tests for the remaining methods
 //  - [x] Add tests for Dispose and DisposeAsync
-//  - [ ] Try to add some test for mode index corner cases
+//  - [x] Try to add some test for mode index corner cases
 //  - [ ] Add this service to dependency injection and update those tests
 public sealed class TimerService : IDisposable, IAsyncDisposable
 {

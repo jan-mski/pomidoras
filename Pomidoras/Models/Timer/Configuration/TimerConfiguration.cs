@@ -20,10 +20,6 @@ public record TimerConfiguration(
     int WorkSessionsUntilBreakLong)
 {
 
-    private TimeSpan WorkDuration { get; } = WorkDuration;
-    private TimeSpan BreakShortDuration { get; } = BreakShortDuration;
-    private TimeSpan BreakLongDuration { get; } = BreakLongDuration;
-
     public TimeSpan GetDuration(TimerMode timerMode)
     {
         return timerMode switch
