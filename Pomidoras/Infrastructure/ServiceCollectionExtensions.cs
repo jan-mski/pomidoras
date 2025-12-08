@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Pomidoras.Models.Timer;
 using Pomidoras.Models.Timer.Configuration;
 using Pomidoras.Models.Timer.Configuration.Repository;
 using Pomidoras.ViewModels;
@@ -14,6 +15,7 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddSingleton<TimerConfigurationService>();
         serviceCollection.AddSingleton<ITimerConfigurationRepository, InMemoryTimerConfigurationRepository>(_ =>
             new InMemoryTimerConfigurationRepository());
+        serviceCollection.AddSingleton<TimerService>();
     }
 
 }

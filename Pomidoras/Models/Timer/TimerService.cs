@@ -27,15 +27,6 @@ public record TimerState(
 
 }
 
-// TODO:
-//  - [x] Fix TimerServiceTest by using a timer factory
-//  - [x] Reconsider testing approach for periodic timer so that I can avoid writing shitty interfaces for no reason
-//  - [x] Instead of the dumb timer factory, just configure an interval of 50ms or less and only assert events
-//  - [X] Add remaining methods from TimerService_Old
-//  - [x] Add tests for the remaining methods
-//  - [x] Add tests for Dispose and DisposeAsync
-//  - [x] Try to add some test for mode index corner cases
-//  - [ ] Add this service to dependency injection and update those tests
 public sealed class TimerService : IDisposable, IAsyncDisposable
 {
 
