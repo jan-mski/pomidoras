@@ -34,4 +34,9 @@ public static class TimerConfigurationMother
         return Default() with { InitialModeIndex = initialModeIndex };
     }
 
+    public static TimerConfiguration With_InitialModeIndex_Interval(int initialModeIndex, TimeSpan interval)
+    {
+        return Default() with { InitialModeIndex = initialModeIndex, Interval = interval };
+    }
+
 }

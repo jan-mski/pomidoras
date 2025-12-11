@@ -24,8 +24,6 @@ public class ServiceCollectionTest
         var serviceCollection = new ServiceCollection();
         serviceCollection.AddServices();
 
-        serviceCollection.Should().HaveCount(RegisteredServices.Count);
-
         serviceCollection.Should().SatisfyRespectively(descriptor =>
             {
                 descriptor.ServiceType.Should().Be(RegisteredServices[0].ServiceType);

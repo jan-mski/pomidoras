@@ -10,10 +10,9 @@ public class TimerConfigurationServiceTest
     private readonly TimerConfigurationRepositoryStub _timerConfigurationRepositoryStub = new();
 
     [Fact]
-    public void GetTimerConfiguration_WhenNoConfigurationExists_ReturnsAndSavesDefault()
+    public void GetTimerConfiguration_WhenConfigurationNotExists_ReturnsAndSavesDefault()
     {
         var expectedConfiguration = TimerConfigurationMother.Default();
-        _timerConfigurationRepositoryStub.SaveConfiguration(expectedConfiguration);
 
         var timerConfigurationService = new TimerConfigurationService(_timerConfigurationRepositoryStub);
 
