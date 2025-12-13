@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
-using Pomidoras.Models.Timer;
+using Pomidoras.Models.Timer.Configuration;
 
-namespace Pomidoras.Tests.Models.Timer;
+namespace Pomidoras.Tests.Models.Timer.Configuration;
 
 public class TimerConfigurationTest
 {
@@ -22,11 +22,11 @@ public class TimerConfigurationTest
         var configuration = TimerConfigurationMother.Default();
 
         var expectedInterval = TimerConfigurationMother.DefaultInterval;
-        var expectedDefaultMode = TimerConfigurationMother.DefaultDefaultMode;
+        var expectedInitialModeIndex = TimerConfigurationMother.DefaultInitialModeIndex;
         var expectedWorkSessionsUntilBreakLong = TimerConfigurationMother.DefaultWorkSessionsUntilBreakLong;
 
         configuration.Interval.Should().Be(expectedInterval);
-        configuration.DefaultMode.Should().Be(expectedDefaultMode);
+        configuration.InitialModeIndex.Should().Be(expectedInitialModeIndex);
         configuration.WorkSessionsUntilBreakLong.Should().Be(expectedWorkSessionsUntilBreakLong);
     }
 
