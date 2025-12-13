@@ -2,12 +2,10 @@
 
 on:
   pull_request:
-    branches: [ main ]
-    paths-ignore:
-      - '**.md'
-      - '.gitignore'
-  push:
-    branches: [ main ]
+    branches:
+      - main
+      - feature/**
+      - bugfix/**
     paths-ignore:
       - '**.md'
       - '.gitignore'

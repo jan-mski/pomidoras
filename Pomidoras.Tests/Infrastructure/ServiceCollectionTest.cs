@@ -1,5 +1,8 @@
+using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Pomidoras.Infrastructure;
+using Pomidoras.Models.Timer;
+using Pomidoras.Models.Timer.Configuration;
 using Pomidoras.ViewModels;
 
 namespace Pomidoras.Tests.Infrastructure;
@@ -7,37 +10,41 @@ namespace Pomidoras.Tests.Infrastructure;
 public class ServiceCollectionTest
 {
 
-    public static TheoryData<Type, ServiceLifetime> GetRegisteredServiceTypes()
-    {
-        var theoryData = new TheoryData<Type, ServiceLifetime>();
-        theoryData.Add(typeof(MainWindowViewModel), ServiceLifetime.Transient);
-        return theoryData;
-    }
-    
+    private static readonly List<(Type ServiceType, ServiceLifetime ServiceLifetime)> RegisteredServices =
+    [
+        (typeof(MainWindowViewModel), ServiceLifetime.Transient),
+        (typeof(TimerConfigurationService), ServiceLifetime.Singleton),
+        (typeof(ITimerConfigurationRepository), ServiceLifetime.Singleton),
+        (typeof(TimerService), ServiceLifetime.Singleton)
+    ];
+
     [Fact]
-    public void ServiceProvider_CanBeBuilt_WithoutErrors()
-    {
-        var services = new ServiceCollection();
-        services.AddServices();
-        
-        var serviceProvider = services.BuildServiceProvider();
-
-        Assert.NotNull(serviceProvider);
-    }
-
-    [Theory]
-    [MemberData(nameof(GetRegisteredServiceTypes))]
-    public void MainWindowViewModel_CanBeResolved(Type registeredServiceType, ServiceLifetime registeredServiceLifetime)
+    public void AddServices_AddsExpectedServices()
     {
         var serviceCollection = new ServiceCollection();
         serviceCollection.AddServices();
-        var serviceProvider = serviceCollection.BuildServiceProvider();
-        
-        var actualService = serviceProvider.GetService(registeredServiceType);
-        
-        Assert.NotNull(actualService);
-        Assert.IsType(registeredServiceType, actualService);
-        Assert.Equal(registeredServiceLifetime, registeredServiceLifetime);
+
+        serviceCollection.Should().SatisfyRespectively(descriptor =>
+            {
+                descriptor.ServiceType.Should().Be(RegisteredServices[0].ServiceType);
+                descriptor.Lifetime.Should().Be(RegisteredServices[0].ServiceLifetime);
+            },
+            descriptor =>
+            {
+                descriptor.ServiceType.Should().Be(RegisteredServices[1].ServiceType);
+                descriptor.Lifetime.Should().Be(RegisteredServices[1].ServiceLifetime);
+            },
+            descriptor =>
+            {
+                descriptor.ServiceType.Should().Be(RegisteredServices[2].ServiceType);
+                descriptor.Lifetime.Should().Be(RegisteredServices[2].ServiceLifetime);
+            },
+            descriptor =>
+            {
+                descriptor.ServiceType.Should().Be(RegisteredServices[3].ServiceType);
+                descriptor.Lifetime.Should().Be(RegisteredServices[3].ServiceLifetime);
+            }
+        );
     }
 
 }
