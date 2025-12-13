@@ -184,7 +184,7 @@ public sealed class TimerService : IDisposable, IAsyncDisposable
     private void UpdateRemaining(TimeSpan newRemaining)
     {
         _state.Remaining = newRemaining;
-        RemainingChanged?.Invoke(this, _state.Remaining);
+        RemainingChanged?.Invoke(this, newRemaining);
     }
 
     private List<TimerMode> CreateModes(TimerConfiguration timerConfiguration)
