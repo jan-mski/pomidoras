@@ -1,8 +1,23 @@
-﻿namespace Pomidoras.ViewModels;
+﻿using System;
+using CommunityToolkit.Mvvm.ComponentModel;
+using Pomidoras.Models.Timer;
+
+namespace Pomidoras.ViewModels;
 
 public partial class MainWindowViewModel : ViewModelBase
 {
 
-    public string Greeting { get; } = "Welcome to Avalonia!";
+    [ObservableProperty] private TimeSpan _remaining;
+
+    public MainWindowViewModel(TimerService timerService)
+    {
+        Remaining = timerService.Remaining;
+        timerService.RemainingChanged += OnRemainingChanged;
+    }
+
+    private void OnRemainingChanged(object? _, TimeSpan newRemaining)
+    {
+        Remaining = newRemaining;
+    }
 
 }
