@@ -15,7 +15,7 @@ public partial class MainWindowViewModel : ViewModelBase
         timerService.RemainingChanged += OnRemainingChanged;
     }
 
-    private void OnRemainingChanged(object? _, TimeSpan newRemaining)
+    private void OnRemainingChanged(object? sender, TimeSpan newRemaining)
     {
         Remaining = newRemaining;
     }
