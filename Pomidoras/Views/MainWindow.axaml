@@ -1,6 +1,7 @@
 <Window
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:Pomidoras.Controls"
     xmlns:viewModels="using:Pomidoras.ViewModels"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -13,14 +14,26 @@
     x:DataType="viewModels:MainWindowViewModel"
     Name="Main"
     Icon="/Assets/avalonia-logo.ico"
-    Title="Pomidoras"
-    ExtendClientAreaToDecorationsHint="True"
-    CanResize="False">
+    Title="Pomidoras">
 
     <Panel
         Name="ViewRoot">
-        <TextBlock
-            Name="Timer"
-            Text="{Binding Remaining, StringFormat='mm\\:ss'}" />
+        <StackPanel>
+            <Panel
+                Height="20" />
+            <Panel
+                Height="30">
+                <TextBlock
+                    Name="TimerDisplay"
+                    Text="{Binding Remaining, StringFormat='mm\\:ss'}"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center" />
+            </Panel>
+            <controls:TimerPlaybackControl
+                Name="TimerPlaybackControls"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Top"
+                DataContext="{Binding .}" />
+        </StackPanel>
     </Panel>
 </Window>

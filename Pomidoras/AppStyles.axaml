@@ -16,18 +16,36 @@
         <Setter
             Property="Height"
             Value="90" />
+        <Setter
+            Property="ExtendClientAreaToDecorationsHint"
+            Value="True" />
+        <Setter
+            Property="CanResize"
+            Value="False" />
     </Style>
 
     <Style
-        Selector="TextBlock#Timer">
+        Selector="TextBlock#TimerDisplay">
         <Setter
             Property="FontSize"
             Value="16" />
+    </Style>
+
+    <Style
+        Selector="Button.timer-playback-control">
         <Setter
-            Property="VerticalAlignment"
-            Value="Center" />
+            Property="Background"
+            Value="Transparent" />
         <Setter
-            Property="HorizontalAlignment"
-            Value="Center" />
+            Property="Height"
+            Value="20" />
+    </Style>
+
+    <Style
+        Selector="PathIcon.timer-playback-control-icon">
+        <Setter
+            Property="Height"
+            Value="8" />
+
     </Style>
 </Styles>

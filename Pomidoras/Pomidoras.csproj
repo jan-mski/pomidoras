@@ -26,4 +26,11 @@
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1"/>
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.10"/>
     </ItemGroup>
+
+    <ItemGroup>
+        <Compile Update="Controls\TimerPlaybackControl.axaml.cs">
+            <DependentUpon>TimerPlaybackControl.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+    </ItemGroup>
 </Project>
