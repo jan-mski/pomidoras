@@ -4,9 +4,11 @@
     xmlns:viewModels="using:Pomidoras.ViewModels"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:markup="clr-namespace:Pomidoras.Markup"
     mc:Ignorable="d"
     d:DesignWidth="150"
     d:DesignHeight="90"
+    d:DataContext="{markup:DesignLocator {x:Type viewModels:MainWindowViewModel}}"
     x:Class="Pomidoras.Views.MainWindow"
     x:DataType="viewModels:MainWindowViewModel"
     Name="Main"
@@ -14,10 +16,6 @@
     Title="Pomidoras"
     ExtendClientAreaToDecorationsHint="True"
     CanResize="False">
-
-    <Design.DataContext>
-        <viewModels:MainWindowViewModel />
-    </Design.DataContext>
 
     <Panel
         Name="ViewRoot">

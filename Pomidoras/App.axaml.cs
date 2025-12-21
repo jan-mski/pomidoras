@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using System.Linq;
+using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
 using Pomidoras.Infrastructure;
@@ -12,6 +13,23 @@ namespace Pomidoras;
 
 public partial class App : Application
 {
+
+    public static ServiceProvider? ServiceProvider { get; private set; }
+
+    public App()
+    {
+        var serviceCollection = new ServiceCollection();
+        if (Design.IsDesignMode)
+        {
+            serviceCollection.AddDesignTimeServices();
+        }
+        else
+        {
+            serviceCollection.AddServices();
+        }
+
+        ServiceProvider = serviceCollection.BuildServiceProvider();
+    }
 
     public override void Initialize()
     {
@@ -25,9 +43,8 @@ public partial class App : Application
             // Avoid duplicate validations from both Avalonia and the CommunityToolkit. 
             // More info: https://docs.avaloniaui.net/docs/guides/development-guides/data-validation#manage-validationplugins
             DisableAvaloniaDataAnnotationValidation();
-            var serviceProvider = GetDependencyInjectionServiceProvider();
 
-            var mainWindowViewModel = serviceProvider.GetRequiredService<MainWindowViewModel>();
+            var mainWindowViewModel = ServiceProvider?.GetRequiredService<MainWindowViewModel>();
             desktop.MainWindow = new MainWindow
             {
                 DataContext = mainWindowViewModel
@@ -48,14 +65,6 @@ public partial class App : Application
         {
             BindingPlugins.DataValidators.Remove(plugin);
         }
-    }
-
-    private static ServiceProvider GetDependencyInjectionServiceProvider()
-    {
-        var serviceCollection = new ServiceCollection();
-        serviceCollection.AddServices();
-        
-        return serviceCollection.BuildServiceProvider();
     }
 
 }
