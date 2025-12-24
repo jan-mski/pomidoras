@@ -9,6 +9,12 @@ namespace Pomidoras.Infrastructure;
 public static class ServiceCollectionExtensions
 {
 
+    public static void AddDesignTimeServices(this IServiceCollection serviceCollection)
+    {
+        // This is so that I don't forget how to do that when I actually define a non in-memory repository
+        serviceCollection.AddServices();
+    }
+
     public static void AddServices(this IServiceCollection serviceCollection)
     {
         serviceCollection.AddTransient<MainWindowViewModel>();

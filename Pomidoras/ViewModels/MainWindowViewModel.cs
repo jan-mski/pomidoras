@@ -1,5 +1,6 @@
 ﻿using System;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Pomidoras.Models.Timer;
 
 namespace Pomidoras.ViewModels;
@@ -8,11 +9,33 @@ public partial class MainWindowViewModel : ViewModelBase
 {
 
     [ObservableProperty] private TimeSpan _remaining;
+    [ObservableProperty] private bool _isRunning;
+    private readonly TimerService _timerService;
 
     public MainWindowViewModel(TimerService timerService)
     {
-        Remaining = timerService.Remaining;
-        timerService.RemainingChanged += OnRemainingChanged;
+        _timerService = timerService;
+
+        Remaining = _timerService.Remaining;
+        _timerService.RemainingChanged += OnRemainingChanged;
+        _timerService.IsRunningChanged += OnIsRunningChanged;
+    }
+
+    [RelayCommand]
+    private void StartTimer()
+    {
+        _timerService.Start();
+    }
+
+    [RelayCommand]
+    private void StopTimer()
+    {
+        _timerService.Stop();
+    }
+
+    private void OnIsRunningChanged(object? sender, bool newIsRunning)
+    {
+        IsRunning = newIsRunning;
     }
 
     private void OnRemainingChanged(object? sender, TimeSpan newRemaining)
