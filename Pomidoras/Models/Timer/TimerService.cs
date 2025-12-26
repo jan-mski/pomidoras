@@ -108,26 +108,16 @@ public sealed class TimerService : IDisposable, IAsyncDisposable
         UpdateRemaining(_state.Duration);
     }
 
-    public void SwitchModeNext()
+    public void SwitchMode(bool forward)
     {
         if (_state.IsRunning)
         {
             SetCompleted();
         }
 
-        var nextModeIndex = _state.CurrentModeIndex + 1 == _state.Modes.Count ? 0 : _state.CurrentModeIndex + 1;
-        SwitchMode(nextModeIndex);
-    }
+        var newModeIndex = forward ? GetNextModeIndex() : GetPreviousModeIndex();
 
-    public void SwitchModePrevious()
-    {
-        if (_state.IsRunning)
-        {
-            SetCompleted();
-        }
-
-        var previousModeIndex = _state.CurrentModeIndex - 1 < 0 ? _state.Modes.Count - 1 : _state.CurrentModeIndex - 1;
-        SwitchMode(previousModeIndex);
+        SwitchMode(newModeIndex);
     }
 
     private void SwitchMode(int newModeIndex)
@@ -140,6 +130,20 @@ public sealed class TimerService : IDisposable, IAsyncDisposable
         UpdateRemaining(_state.Duration);
 
         ModeChanged?.Invoke(this, newMode);
+    }
+
+    private int GetNextModeIndex()
+    {
+        return _state.CurrentModeIndex + 1 == _state.Modes.Count
+            ? 0
+            : _state.CurrentModeIndex + 1;
+    }
+
+    private int GetPreviousModeIndex()
+    {
+        return _state.CurrentModeIndex - 1 < 0
+            ? _state.Modes.Count - 1
+            : _state.CurrentModeIndex - 1;
     }
 
     private async Task RunAsyncTimer(CancellationToken cancellationToken)

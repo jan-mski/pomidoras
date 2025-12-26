@@ -257,7 +257,7 @@ public class TimerServiceTest
 
         timerService.Start();
         using var monitoredTimerService = timerService.Monitor();
-        timerService.SwitchModeNext();
+        timerService.SwitchMode(true);
 
         timerService.IsRunning.Should().BeFalse();
         timerService.Remaining.Should().Be(expectedDuration);
@@ -294,7 +294,7 @@ public class TimerServiceTest
         await using var timerService = new TimerService(_timerConfigurationService);
         using var monitoredTimerService = timerService.Monitor();
 
-        timerService.SwitchModeNext();
+        timerService.SwitchMode(true);
 
         timerService.IsRunning.Should().BeFalse();
         timerService.Remaining.Should().Be(expectedDuration);
@@ -342,7 +342,7 @@ public class TimerServiceTest
 
         timerService.Start();
         using var monitoredTimerService = timerService.Monitor();
-        timerService.SwitchModePrevious();
+        timerService.SwitchMode(false);
 
         timerService.IsRunning.Should().BeFalse();
         timerService.Remaining.Should().Be(expectedDuration);
@@ -379,7 +379,7 @@ public class TimerServiceTest
         await using var timerService = new TimerService(_timerConfigurationService);
         using var monitoredTimerService = timerService.Monitor();
 
-        timerService.SwitchModePrevious();
+        timerService.SwitchMode(false);
 
         timerService.IsRunning.Should().BeFalse();
         timerService.Remaining.Should().Be(expectedDuration);
