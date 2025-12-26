@@ -33,6 +33,19 @@ public partial class MainWindowViewModel : ViewModelBase
         _timerService.Stop();
     }
 
+    [RelayCommand]
+    private void SwitchTimerModeNext()
+    {
+        _timerService.SwitchMode(true);
+    }
+
+    [RelayCommand]
+    private void SwitchTimerModePrevious()
+    {
+        _timerService.SwitchMode(false);
+    }
+
+
     private void OnIsRunningChanged(object? sender, bool newIsRunning)
     {
         IsRunning = newIsRunning;

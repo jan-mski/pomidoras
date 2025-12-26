@@ -141,7 +141,7 @@ public sealed class TimerService : IDisposable, IAsyncDisposable
 
     private int GetPreviousModeIndex()
     {
-        return _state.CurrentModeIndex - 1 < 0
+        return _state.CurrentModeIndex - 1 == -1
             ? _state.Modes.Count - 1
             : _state.CurrentModeIndex - 1;
     }
