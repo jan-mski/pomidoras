@@ -14,26 +14,20 @@
     x:DataType="viewModels:MainWindowViewModel"
     Name="Main"
     Icon="/Assets/avalonia-logo.ico"
-    Title="Pomidoras">
+    Title="Pomidoras"
+    Width="150"
+    Height="90"
+    ExtendClientAreaToDecorationsHint="True"
+    CanResize="False">
 
     <Panel
         Name="ViewRoot">
         <StackPanel>
-            <Panel
-                Height="20" />
-            <Panel
-                Height="30">
-                <TextBlock
-                    Name="TimerDisplay"
-                    Text="{Binding Remaining, StringFormat='mm\\:ss'}"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center" />
-            </Panel>
-            <controls:TimerPlaybackControl
-                Name="TimerPlaybackControls"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Top"
-                DataContext="{Binding .}" />
+            <controls:TimerModeBarControl Height="25"
+                                          DataContext="{Binding .}" />
+            <controls:TimerDisplayBarControl Height="30"
+                                             DataContext="{Binding .}" />
+            <controls:TimerPlaybackBarControl DataContext="{Binding .}" />
         </StackPanel>
     </Panel>
 </Window>

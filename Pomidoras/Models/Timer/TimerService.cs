@@ -23,11 +23,7 @@ public sealed class TimerService : IDisposable, IAsyncDisposable
         public TimeSpan Interval { get; } = interval;
         public TimeSpan Remaining { get; set; } = duration;
         public bool IsRunning { get; set; }
-
-        public TimerMode GetCurrentMode()
-        {
-            return Modes[CurrentModeIndex];
-        }
+        public TimerMode CurrentMode => Modes[CurrentModeIndex];
 
     }
 
@@ -44,6 +40,8 @@ public sealed class TimerService : IDisposable, IAsyncDisposable
     public TimeSpan Remaining => _state.Remaining;
 
     public bool IsRunning => _state.IsRunning;
+
+    public TimerMode CurrentMode => _state.CurrentMode;
 
     public TimerService(TimerConfigurationService timerConfigurationService)
     {
@@ -108,38 +106,42 @@ public sealed class TimerService : IDisposable, IAsyncDisposable
         UpdateRemaining(_state.Duration);
     }
 
-    public void SwitchModeNext()
+    public void SwitchMode(bool isForward)
     {
         if (_state.IsRunning)
         {
             SetCompleted();
         }
 
-        var nextModeIndex = _state.CurrentModeIndex + 1 == _state.Modes.Count ? 0 : _state.CurrentModeIndex + 1;
-        SwitchMode(nextModeIndex);
-    }
+        var newModeIndex = isForward ? GetNextModeIndex() : GetPreviousModeIndex();
 
-    public void SwitchModePrevious()
-    {
-        if (_state.IsRunning)
-        {
-            SetCompleted();
-        }
-
-        var previousModeIndex = _state.CurrentModeIndex - 1 < 0 ? _state.Modes.Count - 1 : _state.CurrentModeIndex - 1;
-        SwitchMode(previousModeIndex);
+        SwitchMode(newModeIndex);
     }
 
     private void SwitchMode(int newModeIndex)
     {
         _state.CurrentModeIndex = newModeIndex;
-        var newMode = _state.GetCurrentMode();
+        var newMode = _state.CurrentMode;
 
         _state.Duration = _timerConfiguration.GetDuration(newMode);
 
         UpdateRemaining(_state.Duration);
 
         ModeChanged?.Invoke(this, newMode);
+    }
+
+    private int GetNextModeIndex()
+    {
+        return _state.CurrentModeIndex + 1 == _state.Modes.Count
+            ? 0
+            : _state.CurrentModeIndex + 1;
+    }
+
+    private int GetPreviousModeIndex()
+    {
+        return _state.CurrentModeIndex - 1 == -1
+            ? _state.Modes.Count - 1
+            : _state.CurrentModeIndex - 1;
     }
 
     private async Task RunAsyncTimer(CancellationToken cancellationToken)
@@ -162,6 +164,7 @@ public sealed class TimerService : IDisposable, IAsyncDisposable
         {
             UpdateRemaining(TimeSpan.Zero);
             SetCompleted();
+            SwitchMode(true);
         }
         else
         {
