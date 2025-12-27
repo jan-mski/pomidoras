@@ -5,7 +5,7 @@
              d:DesignHeight="450" x:Class="Pomidoras.Controls.TimerModeBarControl"
              x:DataType="viewModels:MainWindowViewModel">
 
-    <Panel Margin="22, 0 22, 0">
+    <Panel Margin="22, 0, 22, 0">
         <Panel.Styles>
             <Style Selector="Panel > Button">
                 <Setter Property="Background" Value="Transparent" />
@@ -26,7 +26,7 @@
         <TextBlock FontSize="10"
                    HorizontalAlignment="Center"
                    VerticalAlignment="Bottom"
-                   Text="{Binding CurrentMode}" />
+                   Text="{Binding CurrentModeName}" />
         <Button HorizontalAlignment="Right"
                 Command="{Binding SwitchTimerModeNextCommand}">
             <PathIcon Data="{StaticResource FluentUi-ArrowNextFilled}" />

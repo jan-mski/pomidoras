@@ -11,7 +11,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
     [ObservableProperty] private TimeSpan _remaining;
     [ObservableProperty] private bool _isRunning;
-    [ObservableProperty] private string _currentMode;
+    [ObservableProperty] private string _currentModeName;
     private readonly TimerService _timerService;
 
     public MainWindowViewModel(TimerService timerService)
@@ -19,7 +19,7 @@ public partial class MainWindowViewModel : ViewModelBase
         _timerService = timerService;
 
         Remaining = _timerService.Remaining;
-        CurrentMode = _timerService.GetCurrentMode();
+        CurrentModeName = _timerService.CurrentMode.ToString();
         _timerService.RemainingChanged += OnRemainingChanged;
         _timerService.IsRunningChanged += OnIsRunningChanged;
         _timerService.ModeChanged += OnModeChanged;
@@ -62,7 +62,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
     private void OnModeChanged(object? sender, TimerMode newMode)
     {
-        CurrentMode = newMode.ToString();
+        CurrentModeName = newMode.ToString();
     }
 
 }

@@ -23,11 +23,7 @@ public sealed class TimerService : IDisposable, IAsyncDisposable
         public TimeSpan Interval { get; } = interval;
         public TimeSpan Remaining { get; set; } = duration;
         public bool IsRunning { get; set; }
-
-        public TimerMode GetCurrentMode()
-        {
-            return Modes[CurrentModeIndex];
-        }
+        public TimerMode CurrentMode => Modes[CurrentModeIndex];
 
     }
 
@@ -44,6 +40,8 @@ public sealed class TimerService : IDisposable, IAsyncDisposable
     public TimeSpan Remaining => _state.Remaining;
 
     public bool IsRunning => _state.IsRunning;
+
+    public TimerMode CurrentMode => _state.CurrentMode;
 
     public TimerService(TimerConfigurationService timerConfigurationService)
     {
@@ -108,11 +106,6 @@ public sealed class TimerService : IDisposable, IAsyncDisposable
         UpdateRemaining(_state.Duration);
     }
 
-    public string GetCurrentMode()
-    {
-        return _state.GetCurrentMode().ToString();
-    }
-
     public void SwitchMode(bool isForward)
     {
         if (_state.IsRunning)
@@ -128,7 +121,7 @@ public sealed class TimerService : IDisposable, IAsyncDisposable
     private void SwitchMode(int newModeIndex)
     {
         _state.CurrentModeIndex = newModeIndex;
-        var newMode = _state.GetCurrentMode();
+        var newMode = _state.CurrentMode;
 
         _state.Duration = _timerConfiguration.GetDuration(newMode);
 
