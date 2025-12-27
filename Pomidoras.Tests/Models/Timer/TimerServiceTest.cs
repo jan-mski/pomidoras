@@ -34,7 +34,7 @@ public class TimerServiceTest
 
         timerService.IsRunning.Should().BeTrue();
 
-        await TestUtils.WaitUntilAsync(() => monitoredTimerService.OccurredEvents.Length == 4,
+        await TestUtils.WaitUntilAsync(() => monitoredTimerService.OccurredEvents.Length == 6,
             TimeSpan.FromSeconds(5), interval);
         monitoredTimerService.OccurredEvents.Should().SatisfyRespectively(
             e =>
@@ -56,11 +56,21 @@ public class TimerServiceTest
             {
                 e.EventName.Should().Be(nameof(timerService.IsRunningChanged));
                 e.Parameters[1].Should().Be(false);
+            },
+            e =>
+            {
+                e.EventName.Should().Be(nameof(timerService.RemainingChanged));
+                e.Parameters[1].Should().Be(TimerConfigurationMother.DefaultBreakShortDuration);
+            },
+            e =>
+            {
+                e.EventName.Should().Be(nameof(timerService.ModeChanged));
+                e.Parameters[1].Should().Be(TimerMode.BreakShort);
             }
         );
 
         timerService.IsRunning.Should().BeFalse();
-        timerService.Remaining.Should().Be(TimeSpan.Zero);
+        timerService.Remaining.Should().Be(TimerConfigurationMother.DefaultBreakShortDuration);
     }
 
     [Fact]
@@ -79,7 +89,7 @@ public class TimerServiceTest
 
         timerService.IsRunning.Should().BeTrue();
 
-        await TestUtils.WaitUntilAsync(() => monitoredTimerService.OccurredEvents.Length == 4,
+        await TestUtils.WaitUntilAsync(() => monitoredTimerService.OccurredEvents.Length == 6,
             TimeSpan.FromSeconds(5), interval);
         monitoredTimerService.OccurredEvents.Should().SatisfyRespectively(
             e =>
@@ -101,11 +111,21 @@ public class TimerServiceTest
             {
                 e.EventName.Should().Be(nameof(timerService.IsRunningChanged));
                 e.Parameters[1].Should().Be(false);
+            },
+            e =>
+            {
+                e.EventName.Should().Be(nameof(timerService.RemainingChanged));
+                e.Parameters[1].Should().Be(TimerConfigurationMother.DefaultBreakShortDuration);
+            },
+            e =>
+            {
+                e.EventName.Should().Be(nameof(timerService.ModeChanged));
+                e.Parameters[1].Should().Be(TimerMode.BreakShort);
             }
         );
 
         timerService.IsRunning.Should().BeFalse();
-        timerService.Remaining.Should().Be(TimeSpan.Zero);
+        timerService.Remaining.Should().Be(TimerConfigurationMother.DefaultBreakShortDuration);
     }
 
     [Theory]
@@ -125,7 +145,7 @@ public class TimerServiceTest
 
         timerService.IsRunning.Should().BeTrue();
 
-        await TestUtils.WaitUntilAsync(() => monitoredTimerService.OccurredEvents.Length == 3,
+        await TestUtils.WaitUntilAsync(() => monitoredTimerService.OccurredEvents.Length == 5,
             TimeSpan.FromSeconds(5),
             interval);
         monitoredTimerService.OccurredEvents.Should().SatisfyRespectively(
@@ -143,11 +163,21 @@ public class TimerServiceTest
             {
                 e.EventName.Should().Be(nameof(timerService.IsRunningChanged));
                 e.Parameters[1].Should().Be(false);
+            },
+            e =>
+            {
+                e.EventName.Should().Be(nameof(timerService.RemainingChanged));
+                e.Parameters[1].Should().Be(TimerConfigurationMother.DefaultBreakShortDuration);
+            },
+            e =>
+            {
+                e.EventName.Should().Be(nameof(timerService.ModeChanged));
+                e.Parameters[1].Should().Be(TimerMode.BreakShort);
             }
         );
 
         timerService.IsRunning.Should().BeFalse();
-        timerService.Remaining.Should().Be(TimeSpan.Zero);
+        timerService.Remaining.Should().Be(TimerConfigurationMother.DefaultBreakShortDuration);
     }
 
     [Fact]

@@ -171,6 +171,7 @@ public sealed class TimerService : IDisposable, IAsyncDisposable
         {
             UpdateRemaining(TimeSpan.Zero);
             SetCompleted();
+            SwitchMode(true);
         }
         else
         {
