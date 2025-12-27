@@ -108,14 +108,19 @@ public sealed class TimerService : IDisposable, IAsyncDisposable
         UpdateRemaining(_state.Duration);
     }
 
-    public void SwitchMode(bool forward)
+    public string GetCurrentMode()
+    {
+        return _state.GetCurrentMode().ToString();
+    }
+
+    public void SwitchMode(bool isForward)
     {
         if (_state.IsRunning)
         {
             SetCompleted();
         }
 
-        var newModeIndex = forward ? GetNextModeIndex() : GetPreviousModeIndex();
+        var newModeIndex = isForward ? GetNextModeIndex() : GetPreviousModeIndex();
 
         SwitchMode(newModeIndex);
     }

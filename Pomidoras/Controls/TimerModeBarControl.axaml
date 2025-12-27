@@ -1,0 +1,35 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:Pomidoras.ViewModels" mc:Ignorable="d" d:DesignWidth="800"
+             d:DesignHeight="450" x:Class="Pomidoras.Controls.TimerModeBarControl"
+             x:DataType="viewModels:MainWindowViewModel">
+
+    <Panel Margin="22, 0 22, 0">
+        <Panel.Styles>
+            <Style Selector="Panel > Button">
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="Width" Value="24" />
+                <Setter Property="Height" Value="12" />
+                <Setter Property="VerticalAlignment" Value="Bottom" />
+
+                <Style Selector="^ > PathIcon">
+                    <Setter Property="Height" Value="10" />
+                </Style>
+            </Style>
+        </Panel.Styles>
+
+        <Button HorizontalAlignment="Left"
+                Command="{Binding SwitchTimerModePreviousCommand}">
+            <PathIcon Data="{StaticResource FluentUi-ArrowPreviousFilled}" />
+        </Button>
+        <TextBlock FontSize="10"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Bottom"
+                   Text="{Binding CurrentMode}" />
+        <Button HorizontalAlignment="Right"
+                Command="{Binding SwitchTimerModeNextCommand}">
+            <PathIcon Data="{StaticResource FluentUi-ArrowNextFilled}" />
+        </Button>
+    </Panel>
+</UserControl>

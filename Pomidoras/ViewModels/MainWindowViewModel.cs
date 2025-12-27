@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Pomidoras.Models.Timer;
+using Pomidoras.Models.Timer.Configuration;
 
 namespace Pomidoras.ViewModels;
 
@@ -10,6 +11,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
     [ObservableProperty] private TimeSpan _remaining;
     [ObservableProperty] private bool _isRunning;
+    [ObservableProperty] private string _currentMode;
     private readonly TimerService _timerService;
 
     public MainWindowViewModel(TimerService timerService)
@@ -17,8 +19,10 @@ public partial class MainWindowViewModel : ViewModelBase
         _timerService = timerService;
 
         Remaining = _timerService.Remaining;
+        CurrentMode = _timerService.GetCurrentMode();
         _timerService.RemainingChanged += OnRemainingChanged;
         _timerService.IsRunningChanged += OnIsRunningChanged;
+        _timerService.ModeChanged += OnModeChanged;
     }
 
     [RelayCommand]
@@ -54,6 +58,11 @@ public partial class MainWindowViewModel : ViewModelBase
     private void OnRemainingChanged(object? sender, TimeSpan newRemaining)
     {
         Remaining = newRemaining;
+    }
+
+    private void OnModeChanged(object? sender, TimerMode newMode)
+    {
+        CurrentMode = newMode.ToString();
     }
 
 }

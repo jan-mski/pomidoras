@@ -2,10 +2,10 @@
 
 namespace Pomidoras.Controls;
 
-public partial class TimerPlaybackControl : UserControl
+public partial class TimerDisplayBarControl : UserControl
 {
 
-    public TimerPlaybackControl()
+    public TimerDisplayBarControl()
     {
         InitializeComponent();
     }
