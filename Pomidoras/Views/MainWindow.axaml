@@ -26,6 +26,7 @@
             <controls:TimerModeBarControl Height="25"
                                           DataContext="{Binding .}" />
             <controls:TimerDisplayBarControl Height="30"
+                                             Margin="0,2,0,1"
                                              DataContext="{Binding .}" />
             <controls:TimerPlaybackBarControl DataContext="{Binding .}" />
         </StackPanel>
