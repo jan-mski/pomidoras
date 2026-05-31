@@ -35,15 +35,15 @@
             <SplitView.Content>
                 <StackPanel>
                     <Panel>
-                        <controls:TimerModeBarControl Height="22"
-                                                      DataContext="{Binding .}" />
+                        <controls:TimerModeBarControl Height="25"
+                                                      DataContext="{Binding TimerViewModel}" />
                         <controls:SettingsButtonControl DataContext="{Binding .}" />
                     </Panel>
                     <controls:TimerDisplayBarControl Height="30"
                                                      Margin="0,2,0,1"
-                                                     DataContext="{Binding .}" />
+                                                     DataContext="{Binding TimerViewModel}" />
                     <controls:TimerPlaybackBarControl Height="40"
-                                                      DataContext="{Binding .}" />
+                                                      DataContext="{Binding TimerViewModel}" />
                 </StackPanel>
             </SplitView.Content>
         </SplitView>

@@ -17,6 +17,7 @@ public static class ServiceCollectionExtensions
 
     public static void AddServices(this IServiceCollection serviceCollection)
     {
+        serviceCollection.AddTransient<TimerViewModel>();
         serviceCollection.AddTransient<MainWindowViewModel>();
         serviceCollection.AddSingleton<TimerConfigurationService>();
         serviceCollection.AddSingleton<ITimerConfigurationRepository, InMemoryTimerConfigurationRepository>(_ =>
