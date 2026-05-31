@@ -7,7 +7,6 @@ namespace Pomidoras.Views;
 
 public partial class MainWindow : Window
 {
-
     public MainWindow()
     {
         InitializeComponent();
@@ -33,5 +32,4 @@ public partial class MainWindow : Window
         ViewRoot.Height = Height;
         Height += titleBarHeight;
     }
-
 }

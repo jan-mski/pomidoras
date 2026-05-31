@@ -12,6 +12,7 @@ public class ServiceCollectionTest
 
     private static readonly List<(Type ServiceType, ServiceLifetime ServiceLifetime)> RegisteredServices =
     [
+        (typeof(TimerViewModel), ServiceLifetime.Transient),
         (typeof(MainWindowViewModel), ServiceLifetime.Transient),
         (typeof(TimerConfigurationService), ServiceLifetime.Singleton),
         (typeof(ITimerConfigurationRepository), ServiceLifetime.Singleton),
@@ -43,6 +44,11 @@ public class ServiceCollectionTest
             {
                 descriptor.ServiceType.Should().Be(RegisteredServices[3].ServiceType);
                 descriptor.Lifetime.Should().Be(RegisteredServices[3].ServiceLifetime);
+            },
+            descriptor =>
+            {
+                descriptor.ServiceType.Should().Be(RegisteredServices[4].ServiceType);
+                descriptor.Lifetime.Should().Be(RegisteredServices[4].ServiceLifetime);
             }
         );
     }

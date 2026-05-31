@@ -3,7 +3,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:Pomidoras.ViewModels" mc:Ignorable="d" d:DesignWidth="800"
              d:DesignHeight="450" x:Class="Pomidoras.Controls.TimerPlaybackBarControl"
-             x:DataType="viewModels:MainWindowViewModel">
+             x:DataType="viewModels:TimerViewModel">
+    
     <Panel>
         <Panel.Styles>
             <Style Selector="Panel > Button">

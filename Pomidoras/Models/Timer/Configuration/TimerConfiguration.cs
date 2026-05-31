@@ -1,14 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Pomidoras.Models.Timer.Configuration;
 
 public enum TimerMode
 {
-
     Work,
     BreakShort,
     BreakLong
-
 }
 
 public record TimerConfiguration(
@@ -17,8 +17,10 @@ public record TimerConfiguration(
     TimeSpan BreakLongDuration,
     TimeSpan Interval,
     int InitialModeIndex,
-    int WorkSessionsUntilBreakLong)
+    int WorkSessionsUntilBreakLong,
+    bool ContinuousModeEnabled)
 {
+    public List<TimerMode> Modes { get; } = CreateModes(WorkSessionsUntilBreakLong);
 
     public TimeSpan GetDuration(TimerMode timerMode)
     {
@@ -31,4 +33,14 @@ public record TimerConfiguration(
         };
     }
 
+    private static List<TimerMode> CreateModes(int workSessionsUntilBreakLong)
+    {
+        List<TimerMode> workAndBreakShort = new([TimerMode.Work, TimerMode.BreakShort]);
+        List<TimerMode> workAndBreakLong = new([TimerMode.Work, TimerMode.BreakLong]);
+
+        return Enumerable.Repeat(workAndBreakShort, workSessionsUntilBreakLong - 1)
+            .SelectMany(x => x)
+            .Concat(workAndBreakLong)
+            .ToList();
+    }
 }

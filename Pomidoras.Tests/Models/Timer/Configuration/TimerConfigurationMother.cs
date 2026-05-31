@@ -4,13 +4,13 @@ namespace Pomidoras.Tests.Models.Timer.Configuration;
 
 public static class TimerConfigurationMother
 {
-
     public static readonly TimeSpan DefaultWorkDuration = TimeSpan.FromMinutes(25);
     public static readonly TimeSpan DefaultBreakShortDuration = TimeSpan.FromMinutes(5);
     public static readonly TimeSpan DefaultBreakLongDuration = TimeSpan.FromMinutes(20);
     public static readonly TimeSpan DefaultInterval = TimeSpan.FromSeconds(1);
     public const int DefaultInitialModeIndex = 0;
     public const int DefaultWorkSessionsUntilBreakLong = 4;
+    public const bool DefaultContinuousModeEnabled = true;
 
     public static TimerConfiguration Default()
     {
@@ -20,7 +20,8 @@ public static class TimerConfigurationMother
             DefaultBreakLongDuration,
             DefaultInterval,
             DefaultInitialModeIndex,
-            DefaultWorkSessionsUntilBreakLong
+            DefaultWorkSessionsUntilBreakLong,
+            DefaultContinuousModeEnabled
         );
     }
 
@@ -38,5 +39,4 @@ public static class TimerConfigurationMother
     {
         return Default() with { InitialModeIndex = initialModeIndex, Interval = interval };
     }
-
 }

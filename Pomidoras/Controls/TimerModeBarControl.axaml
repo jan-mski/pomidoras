@@ -3,7 +3,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:Pomidoras.ViewModels" mc:Ignorable="d" d:DesignWidth="800"
              d:DesignHeight="450" x:Class="Pomidoras.Controls.TimerModeBarControl"
-             x:DataType="viewModels:MainWindowViewModel">
+             x:DataType="viewModels:TimerViewModel">
 
     <Panel Margin="27, 0, 27, 0">
         <Panel.Styles>

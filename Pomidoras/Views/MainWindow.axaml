@@ -13,6 +13,8 @@
     x:Class="Pomidoras.Views.MainWindow"
     x:DataType="viewModels:MainWindowViewModel"
     Name="Main"
+    Classes.timerEnding="{Binding TimerViewModel.IsEnding}"
+    Classes.timerStarted="{Binding TimerViewModel.IsStarted}"
     Icon="/Assets/avalonia-logo.ico"
     Title="Pomidoras"
     Width="160"
@@ -21,6 +23,49 @@
     CanResize="False"
     Topmost="{Binding AlwaysOnTop}">
 
+    <Window.Styles>
+        <Style Selector="Window.timerStarted">
+            <Style.Animations>
+                <Animation
+                    Duration="0:0:1"
+                    IterationCount="1"
+                    Easing="QuadraticEaseIn">
+                    <KeyFrame Cue="0%">
+                        <Setter Property="Background" Value="Black" />
+                    </KeyFrame>
+                    <KeyFrame Cue="50%">
+                        <Setter Property="Background" Value="#1FA120" />
+                    </KeyFrame>
+                    <KeyFrame Cue="100%">
+                        <Setter Property="Background" Value="Black" />
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>
+        </Style>
+
+        <Style Selector="Window.timerEnding">
+            <Style.Animations>
+                <Animation
+                    Duration="0:0:3"
+                    IterationCount="1"
+                    Easing="QuadraticEaseIn">
+                    <KeyFrame Cue="0%">
+                        <Setter Property="Background" Value="Black" />
+                    </KeyFrame>
+                    <KeyFrame Cue="50%">
+                        <Setter Property="Background" Value="#BF0B0B" />
+                    </KeyFrame>
+                    <KeyFrame Cue="80%">
+                        <Setter Property="Background" Value="#FF5900" />
+                    </KeyFrame>
+                    <KeyFrame Cue="100%">
+                        <Setter Property="Background" Value="Black" />
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>
+        </Style>
+    </Window.Styles>
+
     <Panel
         Name="ViewRoot">
         <SplitView
@@ -28,22 +73,22 @@
             DisplayMode="Overlay"
             PanePlacement="Right"
             CompactPaneLength="30"
-            OpenPaneLength="85">
+            OpenPaneLength="110">
             <SplitView.Pane>
                 <controls:SettingsPaneControl DataContext="{Binding .}" />
             </SplitView.Pane>
             <SplitView.Content>
                 <StackPanel>
                     <Panel>
-                        <controls:TimerModeBarControl Height="22"
-                                                      DataContext="{Binding .}" />
+                        <controls:TimerModeBarControl Height="25"
+                                                      DataContext="{Binding TimerViewModel}" />
                         <controls:SettingsButtonControl DataContext="{Binding .}" />
                     </Panel>
                     <controls:TimerDisplayBarControl Height="30"
                                                      Margin="0,2,0,1"
-                                                     DataContext="{Binding .}" />
+                                                     DataContext="{Binding TimerViewModel}" />
                     <controls:TimerPlaybackBarControl Height="40"
-                                                      DataContext="{Binding .}" />
+                                                      DataContext="{Binding TimerViewModel}" />
                 </StackPanel>
             </SplitView.Content>
         </SplitView>
