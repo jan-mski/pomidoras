@@ -8,19 +8,19 @@
              x:DataType="viewModels:MainWindowViewModel">
     <Panel>
         <Panel.Styles>
-            <Style Selector="Panel > Button">
+            <Style Selector="Panel > Button#OpenSettings">
                 <Setter Property="Background" Value="Transparent" />
-                <Setter Property="Height" Value="16" />
-                <Setter Property="Width" Value="20" />
+                <Setter Property="Height" Value="20" />
+                <Setter Property="Width" Value="24" />
                 <Setter Property="HorizontalAlignment" Value="Right" />
 
                 <Style Selector="^ > PathIcon">
-                    <Setter Property="Height" Value="8" />
+                    <Setter Property="Height" Value="10" />
                 </Style>
             </Style>
         </Panel.Styles>
 
-        <Button Name="Settings"
+        <Button Name="OpenSettings"
                 Command="{Binding ToggleSettingsPaneCommand}">
             <PathIcon Data="{StaticResource FluentUi-Settings-Filled-16}" />
         </Button>

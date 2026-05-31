@@ -16,7 +16,8 @@ public class TimerConfigurationService(ITimerConfigurationRepository repository)
         TimeSpan.FromMinutes(20),
         TimeSpan.FromSeconds(1),
         0,
-        4);
+        4,
+        true);
 
     public TimerConfiguration GetTimerConfiguration()
     {

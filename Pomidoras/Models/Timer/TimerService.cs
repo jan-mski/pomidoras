@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Pomidoras.Models.Timer.Configuration;
@@ -9,30 +8,32 @@ namespace Pomidoras.Models.Timer;
 
 public sealed class TimerService : IDisposable, IAsyncDisposable
 {
-    private sealed class TimerState(
-        List<TimerMode> modes,
-        int currentModeIndex,
-        TimeSpan duration,
-        TimeSpan interval)
+    private sealed class TimerState(TimerConfiguration configuration)
     {
-        public List<TimerMode> Modes { get; } = modes;
-        public int CurrentModeIndex { get; set; } = currentModeIndex;
-        public TimeSpan Duration { get; set; } = duration;
-        public TimeSpan Interval { get; } = interval;
-        public TimeSpan Remaining { get; set; } = duration;
+        public List<TimerMode> Modes { get; } = configuration.Modes;
+        public int CurrentModeIndex { get; set; } = configuration.InitialModeIndex;
+        public TimeSpan Duration { get; set; } = GetInitialModeDuration(configuration);
+        public TimeSpan Interval { get; } = configuration.Interval;
+        public TimeSpan Remaining { get; set; } = GetInitialModeDuration(configuration);
         public bool IsRunning { get; set; }
         public TimerMode CurrentMode => Modes[CurrentModeIndex];
+
+        private static TimeSpan GetInitialModeDuration(TimerConfiguration configuration)
+        {
+            return configuration.GetDuration(configuration.Modes[configuration.InitialModeIndex]);
+        }
     }
 
     private readonly TimerConfigurationService _timerConfigurationService;
     private readonly TimerState _state;
-    private readonly TimerConfiguration _timerConfiguration;
     private CancellationTokenSource? _cancellationTokenSource;
     private Task? _runningTimerTask;
 
     public event EventHandler<TimeSpan>? RemainingChanged;
     public event EventHandler<bool>? IsRunningChanged;
     public event EventHandler<TimerMode>? ModeChanged;
+
+    public TimerConfiguration Configuration { get; }
 
     public TimeSpan Remaining => _state.Remaining;
 
@@ -43,11 +44,8 @@ public sealed class TimerService : IDisposable, IAsyncDisposable
     public TimerService(TimerConfigurationService timerConfigurationService)
     {
         _timerConfigurationService = timerConfigurationService;
-        _timerConfiguration = _timerConfigurationService.GetTimerConfiguration();
-        var timerModes = CreateModes(_timerConfiguration);
-        var initialModeIndex = _timerConfiguration.InitialModeIndex;
-        var duration = _timerConfiguration.GetDuration(timerModes[initialModeIndex]);
-        _state = new TimerState(timerModes, initialModeIndex, duration, _timerConfiguration.Interval);
+        Configuration = _timerConfigurationService.GetTimerConfiguration();
+        _state = new TimerState(Configuration);
     }
 
     public void Dispose()
@@ -120,7 +118,7 @@ public sealed class TimerService : IDisposable, IAsyncDisposable
         _state.CurrentModeIndex = newModeIndex;
         var newMode = _state.CurrentMode;
 
-        _state.Duration = _timerConfiguration.GetDuration(newMode);
+        _state.Duration = Configuration.GetDuration(newMode);
 
         UpdateRemaining(_state.Duration);
 
@@ -185,16 +183,5 @@ public sealed class TimerService : IDisposable, IAsyncDisposable
     {
         _state.Remaining = newRemaining;
         RemainingChanged?.Invoke(this, newRemaining);
-    }
-
-    private List<TimerMode> CreateModes(TimerConfiguration timerConfiguration)
-    {
-        List<TimerMode> workAndBreakShort = new([TimerMode.Work, TimerMode.BreakShort]);
-        List<TimerMode> workAndBreakLong = new([TimerMode.Work, TimerMode.BreakLong]);
-
-        return Enumerable.Repeat(workAndBreakShort, timerConfiguration.WorkSessionsUntilBreakLong - 1)
-            .SelectMany(x => x)
-            .Concat(workAndBreakLong)
-            .ToList();
     }
 }

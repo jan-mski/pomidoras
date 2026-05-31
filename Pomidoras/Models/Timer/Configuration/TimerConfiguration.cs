@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Pomidoras.Models.Timer.Configuration;
 
@@ -15,8 +17,11 @@ public record TimerConfiguration(
     TimeSpan BreakLongDuration,
     TimeSpan Interval,
     int InitialModeIndex,
-    int WorkSessionsUntilBreakLong)
+    int WorkSessionsUntilBreakLong,
+    bool ContinuousModeEnabled)
 {
+    public List<TimerMode> Modes { get; } = CreateModes(WorkSessionsUntilBreakLong);
+
     public TimeSpan GetDuration(TimerMode timerMode)
     {
         return timerMode switch
@@ -26,5 +31,16 @@ public record TimerConfiguration(
             TimerMode.BreakLong => BreakLongDuration,
             _ => throw new ArgumentException("Invalid timer type", nameof(timerMode))
         };
+    }
+
+    private static List<TimerMode> CreateModes(int workSessionsUntilBreakLong)
+    {
+        List<TimerMode> workAndBreakShort = new([TimerMode.Work, TimerMode.BreakShort]);
+        List<TimerMode> workAndBreakLong = new([TimerMode.Work, TimerMode.BreakLong]);
+
+        return Enumerable.Repeat(workAndBreakShort, workSessionsUntilBreakLong - 1)
+            .SelectMany(x => x)
+            .Concat(workAndBreakLong)
+            .ToList();
     }
 }

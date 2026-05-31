@@ -13,7 +13,8 @@
     x:Class="Pomidoras.Views.MainWindow"
     x:DataType="viewModels:MainWindowViewModel"
     Name="Main"
-    Classes.timerEnding="{Binding TimerViewModel.Ending}"
+    Classes.timerEnding="{Binding TimerViewModel.IsEnding}"
+    Classes.timerStarted="{Binding TimerViewModel.IsStarted}"
     Icon="/Assets/avalonia-logo.ico"
     Title="Pomidoras"
     Width="160"
@@ -23,36 +24,42 @@
     Topmost="{Binding AlwaysOnTop}">
 
     <Window.Styles>
-        <Style
-            Selector="Window.timerEnding">
+        <Style Selector="Window.timerStarted">
+            <Style.Animations>
+                <Animation
+                    Duration="0:0:1"
+                    IterationCount="1"
+                    Easing="QuadraticEaseIn">
+                    <KeyFrame Cue="0%">
+                        <Setter Property="Background" Value="Black" />
+                    </KeyFrame>
+                    <KeyFrame Cue="50%">
+                        <Setter Property="Background" Value="#1FA120" />
+                    </KeyFrame>
+                    <KeyFrame Cue="100%">
+                        <Setter Property="Background" Value="Black" />
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>
+        </Style>
+
+        <Style Selector="Window.timerEnding">
             <Style.Animations>
                 <Animation
                     Duration="0:0:3"
-                    IterationCount="5"
+                    IterationCount="1"
                     Easing="QuadraticEaseIn">
-                    <KeyFrame
-                        Cue="0%">
-                        <Setter
-                            Property="Background"
-                            Value="Black" />
+                    <KeyFrame Cue="0%">
+                        <Setter Property="Background" Value="Black" />
                     </KeyFrame>
-                    <KeyFrame
-                        Cue="50%">
-                        <Setter
-                            Property="Background"
-                            Value="#BF0B0B" />
+                    <KeyFrame Cue="50%">
+                        <Setter Property="Background" Value="#BF0B0B" />
                     </KeyFrame>
-                    <KeyFrame
-                        Cue="80%">
-                        <Setter
-                            Property="Background"
-                            Value="#FF5900" />
+                    <KeyFrame Cue="80%">
+                        <Setter Property="Background" Value="#FF5900" />
                     </KeyFrame>
-                    <KeyFrame
-                        Cue="100%">
-                        <Setter
-                            Property="Background"
-                            Value="Black" />
+                    <KeyFrame Cue="100%">
+                        <Setter Property="Background" Value="Black" />
                     </KeyFrame>
                 </Animation>
             </Style.Animations>
@@ -66,7 +73,7 @@
             DisplayMode="Overlay"
             PanePlacement="Right"
             CompactPaneLength="30"
-            OpenPaneLength="85">
+            OpenPaneLength="110">
             <SplitView.Pane>
                 <controls:SettingsPaneControl DataContext="{Binding .}" />
             </SplitView.Pane>
