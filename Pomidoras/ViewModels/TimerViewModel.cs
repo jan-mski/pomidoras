@@ -53,11 +53,16 @@ public partial class TimerViewModel : ViewModelBase
     private void OnIsRunningChanged(object? sender, bool newIsRunning)
     {
         IsRunning = newIsRunning;
+        Ending = false;
     }
 
     private void OnRemainingChanged(object? sender, TimeSpan newRemaining)
     {
         Remaining = newRemaining;
+        if (Remaining.CompareTo(TimeSpan.FromSeconds(15)) <= 0)
+        {
+            Ending = true;
+        }
     }
 
     private void OnModeChanged(object? sender, TimerMode newMode)
