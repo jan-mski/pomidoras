@@ -15,7 +15,7 @@
     Name="Main"
     Classes.timerEnding="{Binding TimerViewModel.IsEnding}"
     Classes.timerStarted="{Binding TimerViewModel.IsStarted}"
-    Icon="/Assets/avalonia-logo.ico"
+    Icon="/Assets/tomato_gpt.png"
     Title="Pomidoras"
     Width="160"
     Height="90"
