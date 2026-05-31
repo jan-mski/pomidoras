@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 
 namespace Pomidoras.Models.Timer.Configuration;
 
@@ -20,6 +21,7 @@ public record TimerConfiguration(
     int WorkSessionsUntilBreakLong,
     bool ContinuousModeEnabled)
 {
+    [JsonIgnore]
     public List<TimerMode> Modes { get; } = CreateModes(WorkSessionsUntilBreakLong);
 
     public TimeSpan GetDuration(TimerMode timerMode)
