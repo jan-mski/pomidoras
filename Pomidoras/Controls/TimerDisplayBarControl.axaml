@@ -9,9 +9,16 @@
     d:DesignHeight="450"
     x:Class="Pomidoras.Controls.TimerDisplayBarControl"
     x:DataType="viewModels:MainWindowViewModel">
-    <TextBlock
-        FontSize="18"
-        HorizontalAlignment="Center"
-        VerticalAlignment="Center"
-        Text="{Binding Remaining, StringFormat='mm\\:ss'}" />
+    <Panel>
+        <Panel.Styles>
+            <Style Selector="TextBlock">
+                <Setter Property="FontSize" Value="20" />
+                <Setter Property="HorizontalAlignment" Value="Center" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+            </Style>
+        </Panel.Styles>
+        
+        <TextBlock
+            Text="{Binding Remaining, StringFormat='mm\\:ss'}" />
+    </Panel>
 </UserControl>
