@@ -21,12 +21,12 @@
         <Button Name="Start"
                 IsVisible="{Binding !IsRunning}"
                 Command="{Binding StartTimerCommand}">
-            <PathIcon Data="{StaticResource FluentUi-PlayRegular}" />
+            <PathIcon Data="{StaticResource FluentUi-Play-Regular-16}" />
         </Button>
         <Button Name="Stop"
                 IsVisible="{Binding IsRunning}"
                 Command="{Binding StopTimerCommand}">
-            <PathIcon Data="{StaticResource FluentUi-StopRegular}" />
+            <PathIcon Data="{StaticResource FluentUi-Stop-Regular-16}" />
         </Button>
     </Panel>
 </UserControl>

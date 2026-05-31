@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:markup="clr-namespace:Pomidoras.Markup"
     mc:Ignorable="d"
-    d:DesignWidth="150"
+    d:DesignWidth="160"
     d:DesignHeight="90"
     d:DataContext="{markup:DesignLocator {x:Type viewModels:MainWindowViewModel}}"
     x:Class="Pomidoras.Views.MainWindow"
@@ -15,20 +15,37 @@
     Name="Main"
     Icon="/Assets/avalonia-logo.ico"
     Title="Pomidoras"
-    Width="150"
+    Width="160"
     Height="90"
     ExtendClientAreaToDecorationsHint="True"
-    CanResize="False">
+    CanResize="False"
+    Topmost="{Binding AlwaysOnTop}">
 
     <Panel
         Name="ViewRoot">
-        <StackPanel>
-            <controls:TimerModeBarControl Height="25"
-                                          DataContext="{Binding .}" />
-            <controls:TimerDisplayBarControl Height="30"
-                                             Margin="0,2,0,1"
-                                             DataContext="{Binding .}" />
-            <controls:TimerPlaybackBarControl DataContext="{Binding .}" />
-        </StackPanel>
+        <SplitView
+            IsPaneOpen="{Binding SettingsPaneOpen}"
+            DisplayMode="Overlay"
+            PanePlacement="Right"
+            CompactPaneLength="30"
+            OpenPaneLength="85">
+            <SplitView.Pane>
+                <controls:SettingsPaneControl DataContext="{Binding .}" />
+            </SplitView.Pane>
+            <SplitView.Content>
+                <StackPanel>
+                    <Panel>
+                        <controls:TimerModeBarControl Height="22"
+                                                      DataContext="{Binding .}" />
+                        <controls:SettingsButtonControl DataContext="{Binding .}" />
+                    </Panel>
+                    <controls:TimerDisplayBarControl Height="30"
+                                                     Margin="0,2,0,1"
+                                                     DataContext="{Binding .}" />
+                    <controls:TimerPlaybackBarControl Height="40"
+                                                      DataContext="{Binding .}" />
+                </StackPanel>
+            </SplitView.Content>
+        </SplitView>
     </Panel>
 </Window>

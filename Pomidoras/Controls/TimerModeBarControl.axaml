@@ -5,31 +5,46 @@
              d:DesignHeight="450" x:Class="Pomidoras.Controls.TimerModeBarControl"
              x:DataType="viewModels:MainWindowViewModel">
 
-    <Panel Margin="22, 0, 22, 0">
+    <Panel Margin="27, 0, 27, 0">
         <Panel.Styles>
             <Style Selector="Panel > Button">
                 <Setter Property="Background" Value="Transparent" />
                 <Setter Property="Width" Value="24" />
-                <Setter Property="Height" Value="12" />
+                <Setter Property="Height" Value="14" />
                 <Setter Property="VerticalAlignment" Value="Bottom" />
 
                 <Style Selector="^ > PathIcon">
                     <Setter Property="Height" Value="10" />
                 </Style>
             </Style>
+
+            <Style Selector="Panel > Button#PreviousMode">
+                <Setter Property="HorizontalAlignment" Value="Left" />
+            </Style>
+
+            <Style Selector="Panel > Button#NextMode">
+                <Setter Property="HorizontalAlignment" Value="Right" />
+            </Style>
+
+            <Style Selector="Panel > TextBlock#CurrentModeName">
+                <Setter Property="FontSize" Value="10" />
+                <Setter Property="HorizontalAlignment" Value="Center" />
+                <Setter Property="VerticalAlignment" Value="Bottom" />
+            </Style>
         </Panel.Styles>
 
-        <Button HorizontalAlignment="Left"
-                Command="{Binding SwitchTimerModePreviousCommand}">
-            <PathIcon Data="{StaticResource FluentUi-ArrowPreviousFilled}" />
+        <Button
+            Name="PreviousMode"
+            Command="{Binding SwitchTimerModePreviousCommand}">
+            <PathIcon Data="{StaticResource FluentUi-ArrowPrevious-Filled-16}" />
         </Button>
-        <TextBlock FontSize="10"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Bottom"
-                   Text="{Binding CurrentModeName}" />
-        <Button HorizontalAlignment="Right"
-                Command="{Binding SwitchTimerModeNextCommand}">
-            <PathIcon Data="{StaticResource FluentUi-ArrowNextFilled}" />
+        <TextBlock
+            Name="CurrentModeName"
+            Text="{Binding CurrentModeName}" />
+        <Button
+            Name="NextMode"
+            Command="{Binding SwitchTimerModeNextCommand}">
+            <PathIcon Data="{StaticResource FluentUi-ArrowNext-Filled-16}" />
         </Button>
     </Panel>
 </UserControl>

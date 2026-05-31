@@ -12,6 +12,8 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty] private TimeSpan _remaining;
     [ObservableProperty] private bool _isRunning;
     [ObservableProperty] private string _currentModeName;
+    [ObservableProperty] private bool _settingsPaneOpen;
+    [ObservableProperty] private bool _alwaysOnTop;
     private readonly TimerService _timerService;
 
     public MainWindowViewModel(TimerService timerService)
@@ -49,6 +51,17 @@ public partial class MainWindowViewModel : ViewModelBase
         _timerService.SwitchMode(false);
     }
 
+    [RelayCommand]
+    private void ToggleSettingsPane()
+    {
+        SettingsPaneOpen = !SettingsPaneOpen;
+    }
+
+    [RelayCommand]
+    private void ToggleAlwaysOnTop()
+    {
+        AlwaysOnTop = !AlwaysOnTop;
+    }
 
     private void OnIsRunningChanged(object? sender, bool newIsRunning)
     {
