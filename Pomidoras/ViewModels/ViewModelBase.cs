@@ -4,5 +4,4 @@ namespace Pomidoras.ViewModels;
 
 public class ViewModelBase : ObservableObject
 {
-
 }

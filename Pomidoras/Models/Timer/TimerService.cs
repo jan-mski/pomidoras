@@ -9,14 +9,12 @@ namespace Pomidoras.Models.Timer;
 
 public sealed class TimerService : IDisposable, IAsyncDisposable
 {
-
     private sealed class TimerState(
         List<TimerMode> modes,
         int currentModeIndex,
         TimeSpan duration,
         TimeSpan interval)
     {
-
         public List<TimerMode> Modes { get; } = modes;
         public int CurrentModeIndex { get; set; } = currentModeIndex;
         public TimeSpan Duration { get; set; } = duration;
@@ -24,7 +22,6 @@ public sealed class TimerService : IDisposable, IAsyncDisposable
         public TimeSpan Remaining { get; set; } = duration;
         public bool IsRunning { get; set; }
         public TimerMode CurrentMode => Modes[CurrentModeIndex];
-
     }
 
     private readonly TimerConfigurationService _timerConfigurationService;
@@ -200,5 +197,4 @@ public sealed class TimerService : IDisposable, IAsyncDisposable
             .Concat(workAndBreakLong)
             .ToList();
     }
-
 }

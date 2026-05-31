@@ -8,7 +8,6 @@ namespace Pomidoras.Infrastructure;
 
 public static class ServiceCollectionExtensions
 {
-
     public static void AddDesignTimeServices(this IServiceCollection serviceCollection)
     {
         // This is so that I don't forget how to do that when I actually define a non in-memory repository
@@ -24,5 +23,4 @@ public static class ServiceCollectionExtensions
             new InMemoryTimerConfigurationRepository());
         serviceCollection.AddSingleton<TimerService>();
     }
-
 }

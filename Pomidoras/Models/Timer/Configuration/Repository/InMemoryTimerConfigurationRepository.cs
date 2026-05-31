@@ -2,7 +2,6 @@
 
 public class InMemoryTimerConfigurationRepository : ITimerConfigurationRepository
 {
-
     private TimerConfiguration? _configuration;
 
     public TimerConfiguration? GetConfiguration()
@@ -15,5 +14,4 @@ public class InMemoryTimerConfigurationRepository : ITimerConfigurationRepositor
         _configuration = configuration;
         return _configuration;
     }
-
 }

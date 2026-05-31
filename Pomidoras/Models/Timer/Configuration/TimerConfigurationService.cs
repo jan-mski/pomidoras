@@ -4,15 +4,12 @@ namespace Pomidoras.Models.Timer.Configuration;
 
 public interface ITimerConfigurationRepository
 {
-
     TimerConfiguration? GetConfiguration();
     TimerConfiguration SaveConfiguration(TimerConfiguration configuration);
-
 }
 
 public class TimerConfigurationService(ITimerConfigurationRepository repository)
 {
-
     private static readonly TimerConfiguration Default = new(
         TimeSpan.FromMinutes(25),
         TimeSpan.FromMinutes(5),
@@ -25,5 +22,4 @@ public class TimerConfigurationService(ITimerConfigurationRepository repository)
     {
         return repository.GetConfiguration() ?? repository.SaveConfiguration(Default);
     }
-
 }

@@ -5,7 +5,6 @@ namespace Pomidoras.ViewModels;
 
 public partial class MainWindowViewModel : ViewModelBase
 {
-
     [ObservableProperty] private bool _settingsPaneOpen;
     [ObservableProperty] private bool _alwaysOnTop;
 
@@ -27,5 +26,4 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         AlwaysOnTop = !AlwaysOnTop;
     }
-
 }

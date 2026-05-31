@@ -8,7 +8,6 @@ namespace Pomidoras.ViewModels;
 
 public partial class TimerViewModel : ViewModelBase
 {
-
     [ObservableProperty] private TimeSpan _remaining;
     [ObservableProperty] private bool _isRunning;
     [ObservableProperty] private string _currentModeName;
@@ -65,5 +64,4 @@ public partial class TimerViewModel : ViewModelBase
     {
         CurrentModeName = newMode.ToString();
     }
-
 }

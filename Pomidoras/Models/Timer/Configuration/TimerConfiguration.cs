@@ -4,11 +4,9 @@ namespace Pomidoras.Models.Timer.Configuration;
 
 public enum TimerMode
 {
-
     Work,
     BreakShort,
     BreakLong
-
 }
 
 public record TimerConfiguration(
@@ -19,7 +17,6 @@ public record TimerConfiguration(
     int InitialModeIndex,
     int WorkSessionsUntilBreakLong)
 {
-
     public TimeSpan GetDuration(TimerMode timerMode)
     {
         return timerMode switch
@@ -30,5 +27,4 @@ public record TimerConfiguration(
             _ => throw new ArgumentException("Invalid timer type", nameof(timerMode))
         };
     }
-
 }
